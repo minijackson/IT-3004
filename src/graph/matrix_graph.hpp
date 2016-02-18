@@ -1,0 +1,102 @@
+#ifndef _MATRIX_GRAPH_HPP_
+#define _MATRIX_GRAPH_HPP_
+
+#include "utility.hpp"
+#include "matrix_node.hpp"
+
+#include <list>
+#include <vector>
+#include <set>
+
+#include <cstddef>
+
+/*! \brief Namespace used for the classes and types using a graph with a boolean matrix as internal
+ *         representation.
+ */
+namespace matrix {
+
+	/*! \brief Represents a graph with a boolean matrix as internal representation.
+	 */
+	class Graph {
+	public:
+		/*! \brief Create an empty graph
+		 */
+		Graph() = default;
+
+		/*! \brief Create a graph with a certain number of vertices.
+		 *
+		 * \param nbVertices the number of vertices in the graph
+		 */
+		Graph(size_t nbVertices);
+
+		/*! \brief Create a graph with a certain number of vertices and some arcs.
+		 *
+		 * \param nbVertices the number of vertices in the graph.
+		 * \param arcs the arcs to add in the graph.
+		 */
+		template <typename... Arcs>
+		Graph(size_t nbVertices, Arcs... arcs);
+
+		/*! \brief Create a graph with some arcs.
+		 *
+		 * \param arcs the arcs to add in the graph.
+		 */
+		Graph(std::initializer_list<std::pair<size_t, size_t>> arcs);
+
+		/*! \brief Add an arc to the graph.
+		 *
+		 * \param arc A pair whose first element is the starting vertex, and the second
+		 *        element is the end vertex.
+		 */
+		void addArcs(std::pair<size_t, size_t> const& arc);
+
+		/*! \brief Add several arcs to the graph.
+		 *
+		 * \param arc An arc.
+		 * \param arcs More arcs.
+		 * \sa addArcs(std::pair<int, int>)
+		 */
+		template <typename... Arcs>
+		inline void addArcs(std::pair<size_t, size_t> const& arc, Arcs... arcs);
+
+		/*! \brief Get the matrix of connections for this graph.
+		 */
+		std::vector<std::vector<bool>> getConnections() const;
+
+		/*! \brief Get the number of vertices in the graph.
+		 *
+		 * \return the number of vertices in the graph.
+		 */
+		size_t getVerticesCount() const;
+
+		/*! \brief Get the number of arcs in the graph.
+		 *
+		 * \return the number of arcs in the graph.
+		 */
+		size_t getArcsCount() const;
+
+		/*! \brief Get the strongly connected component of a given vertex.
+		 *
+		 * \param vertex The vertex from which to compute the strongly connected component.
+		 * \return the set of vertices which compose the strongly connected component.
+		 */
+		std::set<size_t> stronglyConnectedComponent(size_t vertex) const;
+
+		/*! \brief Return a Node representing a node from this graph with a given name.
+		 *
+		 * \param nodeId The name of the node.
+		 * \return The Node representing the given node.
+		 */
+		Node operator[](size_t nodeId);
+
+	protected:
+		/*! \brief The matrix representing the connections in the graph.
+		 */
+		std::vector<std::vector<bool>> connections;
+	};
+
+}
+
+#include "matrix_graph.tcc"
+
+#endif
