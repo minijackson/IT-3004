@@ -75,6 +75,12 @@ namespace matrix {
 		 */
 		size_t getArcsCount() const;
 
+		/*! \brief Return the symmetric graph of the current graph.
+		 *
+		 * \return the symmetric graph of the current graph.
+		 */
+		Graph symmetric() const;
+
 		/*! \brief Get the strongly connected component of a given vertex.
 		 *
 		 * \param vertex The vertex from which to compute the strongly connected component.
@@ -82,12 +88,33 @@ namespace matrix {
 		 */
 		std::set<size_t> stronglyConnectedComponent(size_t vertex) const;
 
+		/*! \brief Get the connected component of a given vertex.
+		 *
+		 * \param vertex The vertex from which to compute the connected component.
+		 * \return the set of vertices which compose the connected component.
+		 */
+		std::set<size_t> connectedComponent(size_t vertex) const;
+
 		/*! \brief Return a Node representing a node from this graph with a given name.
 		 *
 		 * \param nodeId The name of the node.
 		 * \return The Node representing the given node.
 		 */
 		Node operator[](size_t nodeId);
+
+		/*! \brief Check if two graphs are equal.
+		 *
+		 * \param other The other graph to check for equality.
+		 * \return true if the two graphs are equal.
+		 */
+		bool operator==(Graph const& other) const;
+
+		/*! \brief Check if two graphs are not equal.
+		 *
+		 * \param other The other graph to check for equality.
+		 * \return true if the two graphs are not equal.
+		 */
+		bool operator!=(Graph const& other) const;
 
 	protected:
 		/*! \brief The matrix representing the connections in the graph.

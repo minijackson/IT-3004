@@ -2,6 +2,9 @@
 
 #include <iostream>
 #include <set>
+#include <vector>
+
+#include <iostream>
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_ALTERNATIVE_INIT_API
@@ -115,6 +118,45 @@ BOOST_AUTO_TEST_CASE(matrix_graph_with_initializer_list) {
 	}
 }
 
+BOOST_AUTO_TEST_CASE(matrix_graph_symmetric) {
+	using matrix::Graph;
+	using matrix::Node;
+
+	Graph myGraph{{1, 2}, {3, 4}, {5, 6}}, expected{{2, 1}, {4, 3}, {6, 5}};
+
+	BOOST_CHECK(myGraph.symmetric() == expected);
+}
+
+BOOST_AUTO_TEST_CASE(matrix_graph_strongly_connected_component) {
+	using matrix::Graph;
+	using matrix::Node;
+
+	Graph myGraph{{0, 1}, {0, 5}, {1, 2}, {2, 5}, {3, 1}, {3, 2}, {4, 2}, {5, 1}, {5, 3}, {5, 4}};
+	std::set<size_t> expectedFor0{0}, expectedForOthers{1, 2, 3, 4, 5};
+
+	BOOST_CHECK(myGraph.stronglyConnectedComponent(0) == expectedFor0);
+	BOOST_CHECK(myGraph.stronglyConnectedComponent(1) == expectedForOthers);
+	BOOST_CHECK(myGraph.stronglyConnectedComponent(2) == expectedForOthers);
+	BOOST_CHECK(myGraph.stronglyConnectedComponent(5) == expectedForOthers);
+}
+
+BOOST_AUTO_TEST_CASE(matrix_graph_connected_component) {
+	using matrix::Graph;
+	using matrix::Node;
+
+	Graph myGraph{{0, 1}, {1, 2}, {2, 0}, {3, 4}, {4, 3}, {5, 6}, {7, 7}};
+	std::set<size_t> expectedFor0{0, 1, 2}, expectedFor3{3, 4}, expectedFor5{5, 6}, expectedFor7{7};
+
+	BOOST_CHECK(myGraph.connectedComponent(0) == expectedFor0);
+	BOOST_CHECK(myGraph.connectedComponent(1) == expectedFor0);
+	BOOST_CHECK(myGraph.connectedComponent(2) == expectedFor0);
+	BOOST_CHECK(myGraph.connectedComponent(3) == expectedFor3);
+	BOOST_CHECK(myGraph.connectedComponent(4) == expectedFor3);
+	BOOST_CHECK(myGraph.connectedComponent(5) == expectedFor5);
+	BOOST_CHECK(myGraph.connectedComponent(6) == expectedFor5);
+	BOOST_CHECK(myGraph.connectedComponent(7) == expectedFor7);
+}
+
 BOOST_AUTO_TEST_CASE(matrix_graph_subscript_operator) {
 	using matrix::Graph;
 	using matrix::Node;
@@ -123,6 +165,36 @@ BOOST_AUTO_TEST_CASE(matrix_graph_subscript_operator) {
 	Node firstNode = myGraph[0];
 
 	BOOST_CHECK(myGraph.getConnections() == firstNode.getConnections());
+}
+
+BOOST_AUTO_TEST_CASE(matrix_graph_equal_to_operator) {
+	using matrix::Graph;
+	using matrix::Node;
+
+	Graph myGraph{{6, 5}, {4, 3}, {2, 1}}, myOtherGraph{{6, 5}, {4, 3}, {2, 1}};
+
+	BOOST_CHECK(myGraph == myOtherGraph);
+}
+
+BOOST_AUTO_TEST_CASE(matrix_graph_not_equal_to_operator) {
+	using matrix::Graph;
+	using matrix::Node;
+
+	Graph myGraph{{6, 5}, {4, 3}, {2, 1}}, myOtherGraph{{7, 6}, {4, 3}, {2, 1}};
+
+	BOOST_CHECK(myGraph != myOtherGraph);
+}
+
+BOOST_AUTO_TEST_CASE(matrix_node_get_id) {
+	using matrix::Graph;
+	using matrix::Node;
+
+	Graph myGraph{{0, 0}, {1, 1}, {2, 2}, {3, 3}};
+
+	BOOST_CHECK_EQUAL(myGraph[0].getId(), 0);
+	BOOST_CHECK_EQUAL(myGraph[1].getId(), 1);
+	BOOST_CHECK_EQUAL(myGraph[2].getId(), 2);
+	BOOST_CHECK_EQUAL(myGraph[3].getId(), 3);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_node_is_connected_to) {
