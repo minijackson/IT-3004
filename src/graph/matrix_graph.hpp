@@ -4,10 +4,18 @@
 #include "utility.hpp"
 #include "matrix_node.hpp"
 
+#include <ostream>
 #include <set>
 #include <vector>
 
 #include <cstddef>
+
+namespace matrix {
+	class Graph;
+}
+
+std::ostream& operator<<(std::ostream& os, matrix::Graph graph);
+std::string makeDigraph(std::string name, matrix::Graph graph);
 
 /*! \brief Namespace used for the classes and types using a graph with an adjacency matrix as
  *         internal representation.
@@ -114,6 +122,8 @@ namespace matrix {
 		 * \return true if the two graphs are not equal.
 		 */
 		bool operator!=(Graph const& other) const;
+
+		friend std::ostream& (::operator<<)(std::ostream& os, Graph graph);
 
 	protected:
 		/*! \brief The matrix representing the connections in the graph.

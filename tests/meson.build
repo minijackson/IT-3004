@@ -16,4 +16,8 @@ list_graph_testing = executable('list_graph_testing',
 
 test('List Graph testing', list_graph_testing, args: ['-l', 'test_suite'])
 
+graphviz = executable('graphviz',
+                      'graphviz.cpp',
+                      include_directories: graph_inc,
+                      link_with: libgraph)
 # vim: ft=cmake

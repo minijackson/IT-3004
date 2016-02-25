@@ -5,10 +5,18 @@
 #include "list_node.hpp"
 
 #include <list>
+#include <ostream>
 #include <set>
 #include <vector>
 
 #include <cstddef>
+
+namespace list {
+	class Graph;
+}
+
+std::ostream& operator<<(std::ostream& os, list::Graph graph);
+std::string makeDigraph(std::string name, list::Graph graph);
 
 /*! \brief Namespace used for the classes and types using a graph with an adjacency list as internal
  *         representation.
@@ -115,6 +123,8 @@ namespace list {
 		 * \return true if the two graphs are not equal.
 		 */
 		bool operator!=(Graph const& other) const;
+
+		friend std::ostream& (::operator<<)(std::ostream& os, Graph graph);
 
 	protected:
 		/*! \brief The matrix representing the connections in the graph.
