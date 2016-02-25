@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_subscript_operator) {
 	Graph myGraph{{1, 2}, {3, 4}, {5, 6}};
 	Node firstNode = myGraph[0];
 
-	BOOST_CHECK(myGraph.getConnections() == firstNode.getConnections());
+	BOOST_CHECK(myGraph.getConnections()[0] == firstNode.getConnections());
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_equal_to_operator) {

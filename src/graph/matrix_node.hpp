@@ -65,7 +65,7 @@ namespace matrix {
 		 *
 		 * \return A copy of the internale boolean matrix.
 		 */
-		std::vector<std::vector<bool>> getConnections() const;
+		std::vector<bool> getConnections() const;
 
 	protected:
 		/*! \brief The name of the node to reference.
@@ -74,7 +74,7 @@ namespace matrix {
 
 		/*! \brief The matrix representing the connections in the graph.
 		 */
-		std::vector<std::vector<bool>>& connections;
+		std::vector<bool>& connections;
 	};
 }
 
