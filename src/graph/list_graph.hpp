@@ -1,20 +1,21 @@
-#ifndef _GRAPH_LIB_MATRIX_GRAPH_HPP_
-#define _GRAPH_LIB_MATRIX_GRAPH_HPP_
+#ifndef _GRAPH_LIB_LIST_GRAPH_HPP_
+#define _GRAPH_LIB_LIST_GRAPH_HPP_
 
 #include "utility.hpp"
-#include "matrix_node.hpp"
+#include "list_node.hpp"
 
+#include <list>
 #include <set>
 #include <vector>
 
 #include <cstddef>
 
-/*! \brief Namespace used for the classes and types using a graph with an adjacency matrix as
- *         internal representation.
+/*! \brief Namespace used for the classes and types using a graph with an adjacency list as internal
+ *         representation.
  */
-namespace matrix {
+namespace list {
 
-	/*! \brief Represents a graph with an adjacency matrix as internal representation.
+	/*! \brief Represents a graph with an adjacency list as internal representation.
 	 */
 	class Graph {
 	public:
@@ -60,7 +61,7 @@ namespace matrix {
 
 		/*! \brief Get the matrix of connections for this graph.
 		 */
-		std::vector<std::vector<bool>> getConnections() const;
+		std::vector<std::list<size_t>> getConnections() const;
 
 		/*! \brief Get the number of vertices in the graph.
 		 *
@@ -118,11 +119,11 @@ namespace matrix {
 	protected:
 		/*! \brief The matrix representing the connections in the graph.
 		 */
-		std::vector<std::vector<bool>> connections;
+		std::vector<std::list<size_t>> connections;
 	};
 
 }
 
-#include "matrix_graph.tcc"
+#include "list_graph.tcc"
 
 #endif
