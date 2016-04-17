@@ -212,19 +212,6 @@ BOOST_AUTO_TEST_CASE(matrix_node_is_connected_to) {
 	BOOST_CHECK(myGraph[1].isConnectedTo(3));
 }
 
-BOOST_AUTO_TEST_CASE(matrix_node_subscript_operator) {
-	using matrix::Graph;
-	using matrix::Node;
-
-	Graph myGraph{{1, 1}, {4, 5}, {3, 6}, {1, 2}};
-
-	BOOST_CHECK_EQUAL(myGraph.getConnections()[2][2], false);
-	BOOST_CHECK(!myGraph[2].isConnectedTo(2));
-	myGraph[2].connectTo(2);
-	BOOST_CHECK_EQUAL(myGraph.getConnections()[2][2], true);
-	BOOST_CHECK(myGraph[2].isConnectedTo(2));
-}
-
 BOOST_AUTO_TEST_CASE(matrix_node_connect_disconnect) {
 	using matrix::Graph;
 	using matrix::Node;
