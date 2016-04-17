@@ -61,78 +61,12 @@ namespace list {
 		return symmetricGraph;
 	}
 
-	std::set<size_t> Graph::stronglyConnectedComponent(size_t vertex) const {
-		std::set<size_t> verticesToCheck{vertex}, existPathToVertex{vertex},
-		  existPathToVertexSym{vertex};
-
-		while(!verticesToCheck.empty()) {
-			size_t currentVertex = *verticesToCheck.begin();
-			verticesToCheck.erase(currentVertex);
-
-			for(size_t endVertex : connections[currentVertex]) {
-				if(existPathToVertex.find(endVertex) == existPathToVertex.end()) {
-					verticesToCheck.insert(endVertex);
-					existPathToVertex.insert(endVertex);
-				}
-			}
-		}
-
-		verticesToCheck            = std::set<size_t>{vertex};
-		Graph sym                  = this->symmetric();
-		auto const& symConnections = sym.connections;
-
-		while(!verticesToCheck.empty()) {
-			size_t currentVertex = *verticesToCheck.begin();
-			verticesToCheck.erase(currentVertex);
-
-			for(size_t endVertex : symConnections[currentVertex]) {
-				if(existPathToVertexSym.find(endVertex) == existPathToVertexSym.end()) {
-					verticesToCheck.insert(endVertex);
-					existPathToVertexSym.insert(endVertex);
-				}
-			}
-		}
-
-		std::set<size_t> component;
-
-		std::set_intersection(existPathToVertex.begin(),
-		                      existPathToVertex.end(),
-		                      existPathToVertexSym.begin(),
-		                      existPathToVertexSym.end(),
-		                      std::inserter(component, component.begin()));
-		return component;
-	}
-
-	std::set<size_t> Graph::connectedComponent(size_t vertex) const {
-		std::set<size_t> verticesToCheck{vertex}, component{vertex};
-
-		Graph sym                  = this->symmetric();
-		auto const& symConnections = sym.connections;
-
-		while(!verticesToCheck.empty()) {
-			size_t currentVertex = *verticesToCheck.begin();
-			verticesToCheck.erase(currentVertex);
-
-			for(size_t endVertex : connections[currentVertex]) {
-				if(component.find(endVertex) == component.end()) {
-					verticesToCheck.insert(endVertex);
-					component.insert(endVertex);
-				}
-			}
-
-			for(size_t endVertex : symConnections[currentVertex]) {
-				if(component.find(endVertex) == component.end()) {
-					verticesToCheck.insert(endVertex);
-					component.insert(endVertex);
-				}
-			}
-		}
-
-		return component;
-	}
-
 	Node Graph::operator[](size_t nodeId) {
 		return Node(nodeId, connections);
+	}
+
+	ConstNode Graph::operator[](size_t nodeId) const {
+		return ConstNode(nodeId, connections);
 	}
 
 	bool Graph::operator==(Graph const& other) const {

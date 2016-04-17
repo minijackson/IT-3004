@@ -23,6 +23,18 @@ namespace list {
 	      , connections(connections[id]) {}
 
 	template <typename Connections>
+	template <typename OtherConnections>
+	bool GenericNode<Connections>::operator==(GenericNode<OtherConnections> other) const {
+		return id == other.id;
+	}
+
+	template <typename Connections>
+	template <typename OtherConnections>
+	bool GenericNode<Connections>::operator<(GenericNode<OtherConnections> other) const {
+		return id < other.id;
+	}
+
+	template <typename Connections>
 	bool GenericNode<Connections>::isConnectedTo(size_t otherId) const {
 		return std::find(connections.begin(), connections.end(), otherId) != connections.end();
 	}
