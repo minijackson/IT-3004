@@ -130,7 +130,8 @@ BOOST_AUTO_TEST_CASE(matrix_graph_strongly_connected_component) {
 	using matrix::Node;
 	using matrix::ConstNode;
 
-	Graph myGraph{{0, 1}, {0, 5}, {1, 2}, {2, 5}, {3, 1}, {3, 2}, {4, 2}, {5, 1}, {5, 3}, {5, 4}};
+	const Graph myGraph{
+	        {0, 1}, {0, 5}, {1, 2}, {2, 5}, {3, 1}, {3, 2}, {4, 2}, {5, 1}, {5, 3}, {5, 4}};
 	std::set<ConstNode> expectedFor0{myGraph[0]},
 	        expectedForOthers{myGraph[1], myGraph[2], myGraph[3], myGraph[4], myGraph[5]};
 
@@ -145,7 +146,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_connected_component) {
 	using matrix::Node;
 	using matrix::ConstNode;
 
-	Graph myGraph{{0, 1}, {1, 2}, {2, 0}, {3, 4}, {4, 3}, {5, 6}, {7, 7}};
+	const Graph myGraph{{0, 1}, {1, 2}, {2, 0}, {3, 4}, {4, 3}, {5, 6}, {7, 7}};
 	std::set<ConstNode> expectedFor0{myGraph[0], myGraph[1], myGraph[2]},
 	        expectedFor3{myGraph[3], myGraph[4]}, expectedFor5{myGraph[5], myGraph[6]},
 	        expectedFor7{myGraph[7]};
@@ -218,10 +219,10 @@ BOOST_AUTO_TEST_CASE(matrix_node_subscript_operator) {
 	Graph myGraph{{1, 1}, {4, 5}, {3, 6}, {1, 2}};
 
 	BOOST_CHECK_EQUAL(myGraph.getConnections()[2][2], false);
-	BOOST_CHECK_EQUAL(myGraph[2][2], false);
-	myGraph[2][2] = true;
+	BOOST_CHECK(!myGraph[2].isConnectedTo(2));
+	myGraph[2].connectTo(2);
 	BOOST_CHECK_EQUAL(myGraph.getConnections()[2][2], true);
-	BOOST_CHECK_EQUAL(myGraph[2][2], true);
+	BOOST_CHECK(myGraph[2].isConnectedTo(2));
 }
 
 BOOST_AUTO_TEST_CASE(matrix_node_connect_disconnect) {

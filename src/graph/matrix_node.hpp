@@ -13,10 +13,9 @@ namespace matrix {
 	 * Therefore, like an iterator, using this object after the destruction of the parent Graph
 	 * will result in a dandling reference.
 	 */
-	template<typename Connections>
+	template <typename Connections>
 	class GenericNode {
 	public:
-
 		friend class GenericNode<std::vector<bool>&>;
 		friend class GenericNode<std::vector<bool> const&>;
 
@@ -33,13 +32,6 @@ namespace matrix {
 		 */
 		template <typename ParentConnections>
 		GenericNode(size_t id, ParentConnections& connections);
-
-		/*! \brief Access the underlying connection status from this node to a given node.
-		 *
-		 * \param otherId the other node to which the connection status is.
-		 * \return A reference to the connection status from the current node to the given node.
-		 */
-		std::vector<bool>::reference operator[](size_t otherId);
 
 		/*! \brief Return true if two nodes are the same node.
 		 *
@@ -65,18 +57,6 @@ namespace matrix {
 		 * \return true if the current node is connected to the given node.
 		 */
 		bool isConnectedTo(size_t otherId) const;
-
-		/*! \brief Connect the current node to the given node.
-		 *
-		 * \param otherId The other node to connect to.
-		 */
-		void connectTo(size_t otherId);
-
-		/*! \brief Disconnect the current node from the given node.
-		 *
-		 * \param otherId The other node to disconnect from.
-		 */
-		void disconnectFrom(size_t otherId);
 
 		/*! \brief Get the arcs which have the current node as starting point.
 		 *
@@ -106,8 +86,38 @@ namespace matrix {
 		Connections connections;
 	};
 
-	using Node      = GenericNode<std::vector<bool>&>;
-	using ConstNode = GenericNode<std::vector<bool> const&>;
+	class ConstNode : public GenericNode<std::vector<bool> const&> {
+	public:
+		/*! \brief Node default constructor.
+		 *
+		 * \param id The name of the node to reference.
+		 * \param connections A reference to the boolean matrix of the parent Graph.
+		 */
+		ConstNode(size_t id, std::vector<std::vector<bool>> const& connections);
+	};
+
+	class Node : public GenericNode<std::vector<bool>&> {
+	public:
+		/*! \brief Node default constructor.
+		 *
+		 * \param id The name of the node to reference.
+		 * \param connections A reference to the boolean matrix of the parent Graph.
+		 */
+		Node(size_t id, std::vector<std::vector<bool>>& connections);
+
+		/*! \brief Connect the current node to the given node.
+		 *
+		 * \param otherId The other node to connect to.
+		 */
+		void connectTo(size_t otherId);
+
+		/*! \brief Disconnect the current node from the given node.
+		 *
+		 * \param otherId The other node to disconnect from.
+		 */
+		void disconnectFrom(size_t otherId);
+
+	};
 }
 
 #include "matrix_node.tcc"

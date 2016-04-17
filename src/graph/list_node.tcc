@@ -1,6 +1,8 @@
-#include "matrix_node.hpp"
+#include "list_node.hpp"
 
-namespace matrix {
+#include <algorithm>
+
+namespace list {
 
 	template <typename Connections>
 	template <typename OtherConnections>
@@ -21,31 +23,13 @@ namespace matrix {
 	      , connections(connections[id]) {}
 
 	template <typename Connections>
-	template <typename OtherConnections>
-	bool GenericNode<Connections>::operator==(GenericNode<OtherConnections> other) const {
-		return id == other.id;
-	}
-
-	template <typename Connections>
-	template <typename OtherConnections>
-	bool GenericNode<Connections>::operator<(GenericNode<OtherConnections> other) const {
-		return (id < other.id);
-	}
-
-	template <typename Connections>
 	bool GenericNode<Connections>::isConnectedTo(size_t otherId) const {
-		return connections[otherId];
+		return std::find(connections.begin(), connections.end(), otherId) != connections.end();
 	}
 
 	template <typename Connections>
-	std::vector<size_t> GenericNode<Connections>::getArcs() const {
-		std::vector<size_t> res;
-		for(size_t i = 0; i < connections.size(); ++i) {
-			if(connections[i]) {
-				res.push_back(i);
-			}
-		}
-		return res;
+	std::list<size_t> GenericNode<Connections>::getArcs() const {
+		return connections;
 	}
 
 	template <typename Connections>
@@ -54,7 +38,7 @@ namespace matrix {
 	}
 
 	template <typename Connections>
-	std::vector<bool> GenericNode<Connections>::getConnections() const {
+	std::list<size_t> GenericNode<Connections>::getConnections() const {
 		return connections;
 	}
 }
