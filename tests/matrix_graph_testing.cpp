@@ -9,6 +9,8 @@
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
+using namespace graph;
+
 BOOST_AUTO_TEST_CASE(empty_matrix_graph_creation) {
 	using matrix::Graph;
 	Graph myGraph;

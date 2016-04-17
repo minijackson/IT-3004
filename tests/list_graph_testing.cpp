@@ -11,6 +11,8 @@
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
+using namespace graph;
+
 BOOST_AUTO_TEST_CASE(empty_list_graph_creation) {
 	using list::Graph;
 

@@ -10,150 +10,153 @@
 
 #include <cstddef>
 
-namespace matrix {
-	class Graph;
+namespace graph {
+	namespace matrix {
+		class Graph;
+	}
 }
 
-std::ostream& operator<<(std::ostream& os, matrix::Graph graph);
-std::string makeDigraph(std::string name, matrix::Graph graph);
+std::ostream& operator<<(std::ostream& os, graph::matrix::Graph graph);
+std::string makeDigraph(std::string name, graph::matrix::Graph graph);
 
-/*! \brief Namespace used for the classes and types using a graph with an adjacency matrix as
- *         internal representation.
- */
-namespace matrix {
-
-	/*! \brief Represents a graph with an adjacency matrix as internal representation.
+namespace graph {
+	/*! \brief Namespace used for the classes and types using a graph with an adjacency matrix as
+	 *         internal representation.
 	 */
-	class Graph {
-	public:
-		using Node_t      = Node;
-		using ConstNode_t = ConstNode;
+	namespace matrix {
 
-		/*! \brief Create an empty graph
+		/*! \brief Represents a graph with an adjacency matrix as internal representation.
 		 */
-		Graph() = default;
+		class Graph {
+		public:
+			using Node_t      = Node;
+			using ConstNode_t = ConstNode;
 
-		/*! \brief Create a graph with a certain number of vertices.
-		 *
-		 * \param nbVertices the number of vertices in the graph
-		 */
-		explicit Graph(size_t nbVertices);
+			/*! \brief Create an empty graph
+			 */
+			Graph() = default;
 
-		/*! \brief Create a graph with a certain number of vertices and some arcs.
-		 *
-		 * \param nbVertices the number of vertices in the graph.
-		 * \param arcs the arcs to add in the graph.
-		 */
-		template <typename... Arcs>
-		explicit Graph(size_t nbVertices, Arcs... arcs);
+			/*! \brief Create a graph with a certain number of vertices.
+			 *
+			 * \param nbVertices the number of vertices in the graph
+			 */
+			explicit Graph(size_t nbVertices);
 
-		/*! \brief Create a graph with some arcs.
-		 *
-		 * \param arcs the arcs to add in the graph.
-		 */
-		Graph(std::initializer_list<std::pair<size_t, size_t>> arcs);
+			/*! \brief Create a graph with a certain number of vertices and some arcs.
+			 *
+			 * \param nbVertices the number of vertices in the graph.
+			 * \param arcs the arcs to add in the graph.
+			 */
+			template <typename... Arcs>
+			explicit Graph(size_t nbVertices, Arcs... arcs);
 
-		/*! \brief Add an arc to the graph.
-		 *
-		 * \param arc A pair whose first element is the starting vertex, and the second
-		 *        element is the end vertex.
-		 */
-		void addArcs(std::pair<size_t, size_t> const& arc);
+			/*! \brief Create a graph with some arcs.
+			 *
+			 * \param arcs the arcs to add in the graph.
+			 */
+			Graph(std::initializer_list<std::pair<size_t, size_t>> arcs);
 
-		/*! \brief Add several arcs to the graph.
-		 *
-		 * \param arc An arc.
-		 * \param arcs More arcs.
-		 * \sa addArcs(std::pair<size_t, size_t>)
-		 */
-		template <typename... Arcs>
-		inline void addArcs(std::pair<size_t, size_t> const& arc, Arcs... arcs);
+			/*! \brief Add an arc to the graph.
+			 *
+			 * \param arc A pair whose first element is the starting vertex, and the second
+			 *        element is the end vertex.
+			 */
+			void addArcs(std::pair<size_t, size_t> const& arc);
 
-		/*! \brief Get the matrix of connections for this graph.
-		 */
-		std::vector<std::vector<bool>> getConnections() const;
+			/*! \brief Add several arcs to the graph.
+			 *
+			 * \param arc An arc.
+			 * \param arcs More arcs.
+			 * \sa addArcs(std::pair<size_t, size_t>)
+			 */
+			template <typename... Arcs>
+			inline void addArcs(std::pair<size_t, size_t> const& arc, Arcs... arcs);
 
-		/*! \brief Get the number of vertices in the graph.
-		 *
-		 * \return the number of vertices in the graph.
-		 */
-		size_t getVerticesCount() const;
+			/*! \brief Get the matrix of connections for this graph.
+			 */
+			std::vector<std::vector<bool>> getConnections() const;
 
-		/*! \brief Get the number of arcs in the graph.
-		 *
-		 * \return the number of arcs in the graph.
-		 */
-		size_t getArcsCount() const;
+			/*! \brief Get the number of vertices in the graph.
+			 *
+			 * \return the number of vertices in the graph.
+			 */
+			size_t getVerticesCount() const;
 
-		/*! \brief Return the symmetric graph of the current graph.
-		 *
-		 * \return the symmetric graph of the current graph.
-		 */
-		Graph symmetric() const;
+			/*! \brief Get the number of arcs in the graph.
+			 *
+			 * \return the number of arcs in the graph.
+			 */
+			size_t getArcsCount() const;
 
-		/*! Call a given function for each vertices.
-		 *
-		 * The functor must be convertible to a function of type void(Node)
-		 *
-		 * \param functor the function to call
-		 */
-		template<typename Functor>
-		void eachVertices(Functor&& functor) const;
+			/*! \brief Return the symmetric graph of the current graph.
+			 *
+			 * \return the symmetric graph of the current graph.
+			 */
+			Graph symmetric() const;
 
-		/*! Call a given function for each edges.
-		 *
-		 * The functor must be convertible to a function of type void(Node, Node)
-		 *
-		 * \param functor the function to call
-		 */
-		template<typename Functor>
-		void eachEdges(Functor&& functor) const;
+			/*! Call a given function for each vertices.
+			 *
+			 * The functor must be convertible to a function of type void(Node)
+			 *
+			 * \param functor the function to call
+			 */
+			template <typename Functor>
+			void eachVertices(Functor&& functor) const;
 
-		/*! Call a given function for each vertices adjacent to the given edge.
-		 *
-		 * The functor must be convertible to a function of type void(Node)
-		 *
-		 * \param functor the function to call
-		 */
-		template<typename Functor>
-		void eachAdjacents(ConstNode vertex, Functor&& functor) const;
+			/*! Call a given function for each edges.
+			 *
+			 * The functor must be convertible to a function of type void(Node, Node)
+			 *
+			 * \param functor the function to call
+			 */
+			template <typename Functor>
+			void eachEdges(Functor&& functor) const;
 
-		/*! \brief Return a Node representing a node from this graph with a given name.
-		 *
-		 * \param nodeId The name of the node.
-		 * \return The Node representing the given node.
-		 */
-		Node operator[](size_t nodeId);
+			/*! Call a given function for each vertices adjacent to the given edge.
+			 *
+			 * The functor must be convertible to a function of type void(Node)
+			 *
+			 * \param functor the function to call
+			 */
+			template <typename Functor>
+			void eachAdjacents(ConstNode vertex, Functor&& functor) const;
 
-		/*! \brief Return a Node representing a node from this graph with a given name.
-		 *
-		 * \param nodeId The name of the node.
-		 * \return The Node representing the given node.
-		 */
-		ConstNode operator[](size_t nodeId) const;
+			/*! \brief Return a Node representing a node from this graph with a given name.
+			 *
+			 * \param nodeId The name of the node.
+			 * \return The Node representing the given node.
+			 */
+			Node operator[](size_t nodeId);
 
-		/*! \brief Check if two graphs are equal.
-		 *
-		 * \param other The other graph to check for equality.
-		 * \return true if the two graphs are equal.
-		 */
-		bool operator==(Graph const& other) const;
+			/*! \brief Return a Node representing a node from this graph with a given name.
+			 *
+			 * \param nodeId The name of the node.
+			 * \return The Node representing the given node.
+			 */
+			ConstNode operator[](size_t nodeId) const;
 
-		/*! \brief Check if two graphs are not equal.
-		 *
-		 * \param other The other graph to check for equality.
-		 * \return true if the two graphs are not equal.
-		 */
-		bool operator!=(Graph const& other) const;
+			/*! \brief Check if two graphs are equal.
+			 *
+			 * \param other The other graph to check for equality.
+			 * \return true if the two graphs are equal.
+			 */
+			bool operator==(Graph const& other) const;
 
-		friend std::ostream& (::operator<<)(std::ostream& os, Graph graph);
+			/*! \brief Check if two graphs are not equal.
+			 *
+			 * \param other The other graph to check for equality.
+			 * \return true if the two graphs are not equal.
+			 */
+			bool operator!=(Graph const& other) const;
 
-	protected:
-		/*! \brief The matrix representing the connections in the graph.
-		 */
-		std::vector<std::vector<bool>> connections;
-	};
+			friend std::ostream&(::operator<<)(std::ostream& os, Graph graph);
 
+		protected:
+			/*! \brief The matrix representing the connections in the graph.
+			 */
+			std::vector<std::vector<bool>> connections;
+		};
+	}
 }
 
 #include "matrix_graph.tcc"

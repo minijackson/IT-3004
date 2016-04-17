@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-std::ostream& operator<<(std::ostream& os, matrix::Graph graph) {
+std::ostream& operator<<(std::ostream& os, graph::matrix::Graph graph) {
 	size_t startVertex = 0;
 	for(auto const& subArray : graph.connections) {
 		size_t endVertex = 0;
@@ -17,13 +17,13 @@ std::ostream& operator<<(std::ostream& os, matrix::Graph graph) {
 	return os;
 }
 
-std::string makeDigraph(std::string name, matrix::Graph graph) {
+std::string makeDigraph(std::string name, graph::matrix::Graph graph) {
 	std::ostringstream result;
 	result << "digraph " << name << " {" << std::endl << graph << "}" << std::endl;
 	return result.str();
 }
 
-std::ostream& operator<<(std::ostream& os, list::Graph graph) {
+std::ostream& operator<<(std::ostream& os, graph::list::Graph graph) {
 	size_t startVertex = 0;
 	for(auto const& subArray : graph.connections) {
 		for(size_t endVertex : subArray) {
@@ -34,7 +34,7 @@ std::ostream& operator<<(std::ostream& os, list::Graph graph) {
 	return os;
 }
 
-std::string makeDigraph(std::string name, list::Graph graph) {
+std::string makeDigraph(std::string name, graph::list::Graph graph) {
 	std::ostringstream result;
 	result << "digraph " << name << " {" << std::endl << graph << "}" << std::endl;
 	return result.str();
