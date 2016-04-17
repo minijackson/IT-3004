@@ -1,6 +1,6 @@
 #include "graph.hpp"
+#include "algorithms.hpp"
 
-#include <iostream>
 #include <set>
 #include <vector>
 
@@ -128,31 +128,36 @@ BOOST_AUTO_TEST_CASE(matrix_graph_symmetric) {
 BOOST_AUTO_TEST_CASE(matrix_graph_strongly_connected_component) {
 	using matrix::Graph;
 	using matrix::Node;
+	using matrix::ConstNode;
 
 	Graph myGraph{{0, 1}, {0, 5}, {1, 2}, {2, 5}, {3, 1}, {3, 2}, {4, 2}, {5, 1}, {5, 3}, {5, 4}};
-	std::set<size_t> expectedFor0{0}, expectedForOthers{1, 2, 3, 4, 5};
+	std::set<ConstNode> expectedFor0{myGraph[0]},
+	        expectedForOthers{myGraph[1], myGraph[2], myGraph[3], myGraph[4], myGraph[5]};
 
-	BOOST_CHECK(myGraph.stronglyConnectedComponent(0) == expectedFor0);
-	BOOST_CHECK(myGraph.stronglyConnectedComponent(1) == expectedForOthers);
-	BOOST_CHECK(myGraph.stronglyConnectedComponent(2) == expectedForOthers);
-	BOOST_CHECK(myGraph.stronglyConnectedComponent(5) == expectedForOthers);
+	BOOST_CHECK(graph::stronglyConnectedComponent(myGraph, myGraph[0]) == expectedFor0);
+	BOOST_CHECK(graph::stronglyConnectedComponent(myGraph, myGraph[1]) == expectedForOthers);
+	BOOST_CHECK(graph::stronglyConnectedComponent(myGraph, myGraph[2]) == expectedForOthers);
+	BOOST_CHECK(graph::stronglyConnectedComponent(myGraph, myGraph[5]) == expectedForOthers);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_connected_component) {
 	using matrix::Graph;
 	using matrix::Node;
+	using matrix::ConstNode;
 
 	Graph myGraph{{0, 1}, {1, 2}, {2, 0}, {3, 4}, {4, 3}, {5, 6}, {7, 7}};
-	std::set<size_t> expectedFor0{0, 1, 2}, expectedFor3{3, 4}, expectedFor5{5, 6}, expectedFor7{7};
+	std::set<ConstNode> expectedFor0{myGraph[0], myGraph[1], myGraph[2]},
+	        expectedFor3{myGraph[3], myGraph[4]}, expectedFor5{myGraph[5], myGraph[6]},
+	        expectedFor7{myGraph[7]};
 
-	BOOST_CHECK(myGraph.connectedComponent(0) == expectedFor0);
-	BOOST_CHECK(myGraph.connectedComponent(1) == expectedFor0);
-	BOOST_CHECK(myGraph.connectedComponent(2) == expectedFor0);
-	BOOST_CHECK(myGraph.connectedComponent(3) == expectedFor3);
-	BOOST_CHECK(myGraph.connectedComponent(4) == expectedFor3);
-	BOOST_CHECK(myGraph.connectedComponent(5) == expectedFor5);
-	BOOST_CHECK(myGraph.connectedComponent(6) == expectedFor5);
-	BOOST_CHECK(myGraph.connectedComponent(7) == expectedFor7);
+	BOOST_CHECK(graph::connectedComponent(myGraph, myGraph[0]) == expectedFor0);
+	BOOST_CHECK(graph::connectedComponent(myGraph, myGraph[1]) == expectedFor0);
+	BOOST_CHECK(graph::connectedComponent(myGraph, myGraph[2]) == expectedFor0);
+	BOOST_CHECK(graph::connectedComponent(myGraph, myGraph[3]) == expectedFor3);
+	BOOST_CHECK(graph::connectedComponent(myGraph, myGraph[4]) == expectedFor3);
+	BOOST_CHECK(graph::connectedComponent(myGraph, myGraph[5]) == expectedFor5);
+	BOOST_CHECK(graph::connectedComponent(myGraph, myGraph[6]) == expectedFor5);
+	BOOST_CHECK(graph::connectedComponent(myGraph, myGraph[7]) == expectedFor7);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_subscript_operator) {

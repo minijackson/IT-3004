@@ -26,6 +26,9 @@ namespace matrix {
 	 */
 	class Graph {
 	public:
+		using Node_t      = Node;
+		using ConstNode_t = ConstNode;
+
 		/*! \brief Create an empty graph
 		 */
 		Graph() = default;
@@ -88,19 +91,32 @@ namespace matrix {
 		 */
 		Graph symmetric() const;
 
-		/*! \brief Get the strongly connected component of a given vertex.
+		/*! Call a given function for each vertices.
 		 *
-		 * \param vertex The vertex from which to compute the strongly connected component.
-		 * \return the set of vertices which compose the strongly connected component.
+		 * The functor must be convertible to a function of type void(Node)
+		 *
+		 * \param functor the function to call
 		 */
-		std::set<size_t> stronglyConnectedComponent(size_t vertex) const;
+		template<typename Functor>
+		void eachVertices(Functor&& functor) const;
 
-		/*! \brief Get the connected component of a given vertex.
+		/*! Call a given function for each edges.
 		 *
-		 * \param vertex The vertex from which to compute the connected component.
-		 * \return the set of vertices which compose the connected component.
+		 * The functor must be convertible to a function of type void(Node, Node)
+		 *
+		 * \param functor the function to call
 		 */
-		std::set<size_t> connectedComponent(size_t vertex) const;
+		template<typename Functor>
+		void eachEdges(Functor&& functor) const;
+
+		/*! Call a given function for each vertices adjacent to the given edge.
+		 *
+		 * The functor must be convertible to a function of type void(Node)
+		 *
+		 * \param functor the function to call
+		 */
+		template<typename Functor>
+		void eachAdjacents(ConstNode vertex, Functor&& functor) const;
 
 		/*! \brief Return a Node representing a node from this graph with a given name.
 		 *
@@ -108,6 +124,13 @@ namespace matrix {
 		 * \return The Node representing the given node.
 		 */
 		Node operator[](size_t nodeId);
+
+		/*! \brief Return a Node representing a node from this graph with a given name.
+		 *
+		 * \param nodeId The name of the node.
+		 * \return The Node representing the given node.
+		 */
+		ConstNode operator[](size_t nodeId) const;
 
 		/*! \brief Check if two graphs are equal.
 		 *

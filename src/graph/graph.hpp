@@ -1,5 +1,5 @@
-#ifndef _GRAPH_LIB_GRAPH_HPP_
-#define _GRAPH_LIB_GRAPH_HPP_
+#ifndef GRAPH_LIB_GRAPH_HPP
+#define GRAPH_LIB_GRAPH_HPP
 
 #include "matrix_graph.hpp"
 #include "list_graph.hpp"

@@ -13,15 +13,26 @@ namespace matrix {
 	 * Therefore, like an iterator, using this object after the destruction of the parent Graph
 	 * will result in a dandling reference.
 	 */
-	class Node {
+	template<typename Connections>
+	class GenericNode {
 	public:
+
+		friend class GenericNode<std::vector<bool>&>;
+		friend class GenericNode<std::vector<bool> const&>;
+
+		template <typename OtherConnections>
+		GenericNode(GenericNode<OtherConnections>& other);
+
+		template <typename OtherConnections>
+		GenericNode(GenericNode<OtherConnections>&& other);
 
 		/*! \brief Node default constructor.
 		 *
 		 * \param id The name of the node to reference.
 		 * \param connections A reference to the boolean matrix of the parent Graph.
 		 */
-		Node(size_t id, std::vector<std::vector<bool>>& connections);
+		template <typename ParentConnections>
+		GenericNode(size_t id, ParentConnections& connections);
 
 		/*! \brief Access the underlying connection status from this node to a given node.
 		 *
@@ -29,6 +40,24 @@ namespace matrix {
 		 * \return A reference to the connection status from the current node to the given node.
 		 */
 		std::vector<bool>::reference operator[](size_t otherId);
+
+		/*! \brief Return true if two nodes are the same node.
+		 *
+		 * This function will not check if the nodes are from the same graph.
+		 *
+		 * \param other the other node to compare to.
+		 * \return true if the two nodes are the same node from the same graph
+		 */
+		template <typename OtherConnections>
+		bool operator==(GenericNode<OtherConnections> other) const;
+
+		/*! \brief Compare two nodes arbitrarily.
+		 *
+		 * \param other the other node to compare to.
+		 * \return true or false.
+		 */
+		template <typename OtherConnections>
+		bool operator<(GenericNode<OtherConnections> other) const;
 
 		/*! \brief Return true if the current node is connected to the given node.
 		 *
@@ -74,8 +103,13 @@ namespace matrix {
 
 		/*! \brief The matrix representing the connections in the graph.
 		 */
-		std::vector<bool>& connections;
+		Connections connections;
 	};
+
+	using Node      = GenericNode<std::vector<bool>&>;
+	using ConstNode = GenericNode<std::vector<bool> const&>;
 }
+
+#include "matrix_node.tcc"
 
 #endif
