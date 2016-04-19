@@ -254,3 +254,38 @@ BOOST_AUTO_TEST_CASE(list_graph_graphviz) {
 
 	BOOST_CHECK_EQUAL(makeDigraph("myGraph", myGraph), expected);
 }
+
+BOOST_AUTO_TEST_CASE(list_weighted_graph) {
+	using Graph = list::Graph<NoProperty, WeightedProperty>;
+
+	Graph myGraph{{4, 5}, {6, 3}, {2, 4}, {5, 2}, {6, 4}, {3, 3}};
+
+	myGraph.setEdgeProperty(myGraph[2], myGraph[4], {5});
+
+	BOOST_CHECK_THROW(myGraph.getEdgeProperty(myGraph[0], myGraph[1]).weight, std::out_of_range);
+	BOOST_CHECK_THROW(myGraph.getEdgeProperty(myGraph[0], myGraph[2]).weight, std::out_of_range);
+	BOOST_CHECK_THROW(myGraph.getEdgeProperty(myGraph[3], myGraph[2]).weight, std::out_of_range);
+	BOOST_CHECK_THROW(myGraph.getEdgeProperty(myGraph[5], myGraph[1]).weight, std::out_of_range);
+
+	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph[2], myGraph[4]).weight, 5);
+}
+
+BOOST_AUTO_TEST_CASE(list_weighted_graph_default_values) {
+	using Graph = matrix::Graph<NoProperty, WeightedProperty>;
+
+	Graph myGraph{{4, 5}, {6, 3}, {2, 4}, {5, 2}, {6, 4}, {3, 3}};
+
+	myGraph.setEdgeProperty(myGraph[2], myGraph[4], {5});
+
+	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph[4], myGraph[5]).weight, 0);
+	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph[6], myGraph[3]).weight, 0);
+	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph[5], myGraph[2]).weight, 0);
+}
+
+BOOST_AUTO_TEST_CASE(list_weighted_graph_nonexistent_edge) {
+	using Graph = matrix::Graph<NoProperty, WeightedProperty>;
+
+	Graph myGraph{{4, 5}, {6, 3}, {2, 4}, {5, 2}, {6, 4}, {3, 3}};
+
+	BOOST_CHECK_THROW(myGraph.setEdgeProperty(myGraph[2], myGraph[3], {5}), std::out_of_range);
+}

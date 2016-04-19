@@ -65,7 +65,7 @@ namespace graph {
 		void Graph<NodeProperty, EdgeProperty>::setEdgeProperty(ConstNode_t const& begin,
 		                                                        ConstNode_t const& end,
 		                                                        EdgeProperty property) {
-			edgeProperties[{begin.getId(), end.getId()}] = std::move(property);
+			edgeProperties.at({begin.getId(), end.getId()}) = std::move(property);
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
