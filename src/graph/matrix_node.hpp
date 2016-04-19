@@ -14,17 +14,17 @@ namespace graph {
 		 * Therefore, like an iterator, using this object after the destruction of the parent Graph
 		 * will result in a dandling reference.
 		 */
-		template <typename Connections>
+		template <typename NodeProperty, typename Connections>
 		class GenericNode {
 		public:
-			friend class GenericNode<std::vector<bool>&>;
-			friend class GenericNode<std::vector<bool> const&>;
+			friend class GenericNode<NodeProperty, std::vector<bool>&>;
+			friend class GenericNode<NodeProperty, std::vector<bool> const&>;
 
-			template <typename OtherConnections>
-			GenericNode(GenericNode<OtherConnections>& other);
+			template <typename OtherNodeProperty, typename OtherConnections>
+			GenericNode(GenericNode<OtherNodeProperty, OtherConnections>& other);
 
-			template <typename OtherConnections>
-			GenericNode(GenericNode<OtherConnections>&& other);
+			template <typename OtherNodeProperty, typename OtherConnections>
+			GenericNode(GenericNode<OtherNodeProperty, OtherConnections>&& other);
 
 			/*! \brief Node default constructor.
 			 *
@@ -32,7 +32,7 @@ namespace graph {
 			 * \param connections A reference to the boolean matrix of the parent Graph.
 			 */
 			template <typename ParentConnections>
-			GenericNode(size_t id, ParentConnections& connections);
+			GenericNode(size_t id, ParentConnections& connections, NodeProperty& property);
 
 			/*! \brief Return true if two nodes are the same node.
 			 *
@@ -41,16 +41,16 @@ namespace graph {
 			 * \param other the other node to compare to.
 			 * \return true if the two nodes are the same node from the same graph
 			 */
-			template <typename OtherConnections>
-			bool operator==(GenericNode<OtherConnections> other) const;
+			template <typename OtherNodeProperty, typename OtherConnections>
+			bool operator==(GenericNode<OtherNodeProperty, OtherConnections> other) const;
 
 			/*! \brief Compare two nodes arbitrarily.
 			 *
 			 * \param other the other node to compare to.
 			 * \return true or false.
 			 */
-			template <typename OtherConnections>
-			bool operator<(GenericNode<OtherConnections> other) const;
+			template <typename OtherNodeProperty, typename OtherConnections>
+			bool operator<(GenericNode<OtherNodeProperty, OtherConnections> other) const;
 
 			/*! \brief Return true if the current node is connected to the given node.
 			 *
@@ -85,26 +85,36 @@ namespace graph {
 			/*! \brief The matrix representing the connections in the graph.
 			 */
 			Connections connections;
+
+			/*! \brief The property of the current node.
+			 */
+			NodeProperty property;
 		};
 
-		class ConstNode : public GenericNode<std::vector<bool> const&> {
+		template <typename NodeProperty>
+		class ConstNode : public GenericNode<NodeProperty const&, std::vector<bool> const&> {
+			using ParentClass = GenericNode<NodeProperty const&, std::vector<bool> const&>;
 		public:
 			/*! \brief Node default constructor.
 			 *
 			 * \param id The name of the node to reference.
 			 * \param connections A reference to the boolean matrix of the parent Graph.
 			 */
-			ConstNode(size_t id, std::vector<std::vector<bool>> const& connections);
+			ConstNode(size_t id,
+			          std::vector<std::vector<bool>> const& connections,
+			          NodeProperty const& property);
 		};
 
-		class Node : public GenericNode<std::vector<bool>&> {
+		template <typename NodeProperty>
+		class Node : public GenericNode<NodeProperty&, std::vector<bool>&> {
+			using ParentClass = GenericNode<NodeProperty&, std::vector<bool>&>;
 		public:
 			/*! \brief Node default constructor.
 			 *
 			 * \param id The name of the node to reference.
 			 * \param connections A reference to the boolean matrix of the parent Graph.
 			 */
-			Node(size_t id, std::vector<std::vector<bool>>& connections);
+			Node(size_t id, std::vector<std::vector<bool>>& connections, NodeProperty& property);
 
 			/*! \brief Connect the current node to the given node.
 			 *

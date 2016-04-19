@@ -8,5 +8,6 @@ namespace graph {
 
 #include "matrix_graph.hpp"
 #include "list_graph.hpp"
+#include "printing.hpp"
 
 #endif

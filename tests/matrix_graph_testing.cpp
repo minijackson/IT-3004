@@ -12,13 +12,13 @@
 using namespace graph;
 
 BOOST_AUTO_TEST_CASE(empty_matrix_graph_creation) {
-	using matrix::Graph;
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
 	Graph myGraph;
 	BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 0);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_with_vertices_creation) {
-	using matrix::Graph;
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	{
 		Graph myGraph(1);
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_with_vertices_creation) {
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_with_vertices_and_edges_creation) {
-	using matrix::Graph;
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	{
 		Graph myGraph(1, std::pair<int,int>{0, 0});
@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_with_vertices_and_edges_creation) {
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_with_initializer_list) {
-	using matrix::Graph;
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	{
 		Graph myGraph{{0,0}};
@@ -119,8 +119,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_with_initializer_list) {
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_symmetric) {
-	using matrix::Graph;
-	using matrix::Node;
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{1, 2}, {3, 4}, {5, 6}}, expected{{2, 1}, {4, 3}, {6, 5}};
 
@@ -128,9 +127,8 @@ BOOST_AUTO_TEST_CASE(matrix_graph_symmetric) {
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_strongly_connected_component) {
-	using matrix::Graph;
-	using matrix::Node;
-	using matrix::ConstNode;
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
+	using ConstNode = Graph::ConstNode_t;
 
 	const Graph myGraph{
 	        {0, 1}, {0, 5}, {1, 2}, {2, 5}, {3, 1}, {3, 2}, {4, 2}, {5, 1}, {5, 3}, {5, 4}};
@@ -144,9 +142,8 @@ BOOST_AUTO_TEST_CASE(matrix_graph_strongly_connected_component) {
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_connected_component) {
-	using matrix::Graph;
-	using matrix::Node;
-	using matrix::ConstNode;
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
+	using ConstNode = Graph::ConstNode_t;
 
 	const Graph myGraph{{0, 1}, {1, 2}, {2, 0}, {3, 4}, {4, 3}, {5, 6}, {7, 7}};
 	std::set<ConstNode> expectedFor0{myGraph[0], myGraph[1], myGraph[2]},
@@ -164,8 +161,8 @@ BOOST_AUTO_TEST_CASE(matrix_graph_connected_component) {
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_subscript_operator) {
-	using matrix::Graph;
-	using matrix::Node;
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
+	using Node = Graph::Node_t;
 
 	Graph myGraph{{1, 2}, {3, 4}, {5, 6}};
 	Node firstNode = myGraph[0];
@@ -174,8 +171,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_subscript_operator) {
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_equal_to_operator) {
-	using matrix::Graph;
-	using matrix::Node;
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{6, 5}, {4, 3}, {2, 1}}, myOtherGraph{{4, 3}, {6, 5}, {2, 1}};
 
@@ -183,8 +179,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_equal_to_operator) {
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_not_equal_to_operator) {
-	using matrix::Graph;
-	using matrix::Node;
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{6, 5}, {4, 3}, {2, 1}}, myOtherGraph{{7, 6}, {4, 3}, {2, 1}};
 
@@ -192,8 +187,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_not_equal_to_operator) {
 }
 
 BOOST_AUTO_TEST_CASE(matrix_node_get_id) {
-	using matrix::Graph;
-	using matrix::Node;
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{0, 0}, {1, 1}, {2, 2}, {3, 3}};
 
@@ -204,8 +198,7 @@ BOOST_AUTO_TEST_CASE(matrix_node_get_id) {
 }
 
 BOOST_AUTO_TEST_CASE(matrix_node_is_connected_to) {
-	using matrix::Graph;
-	using matrix::Node;
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{0, 0}, {1, 3}, {5, 7}, {2, 0}};
 
@@ -215,8 +208,7 @@ BOOST_AUTO_TEST_CASE(matrix_node_is_connected_to) {
 }
 
 BOOST_AUTO_TEST_CASE(matrix_node_connect_disconnect) {
-	using matrix::Graph;
-	using matrix::Node;
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{6, 2}, {3, 1}, {4, 2}};
 
@@ -231,8 +223,7 @@ BOOST_AUTO_TEST_CASE(matrix_node_connect_disconnect) {
 }
 
 BOOST_AUTO_TEST_CASE(matrix_node_get_arcs) {
-	using matrix::Graph;
-	using matrix::Node;
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{4, 5}, {6, 3}, {2, 4}, {5, 2}, {6, 4}, {3, 3}};
 
@@ -242,7 +233,7 @@ BOOST_AUTO_TEST_CASE(matrix_node_get_arcs) {
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_printing) {
-	using matrix::Graph;
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{4, 5}, {6, 3}, {2, 4}, {5, 2}, {6, 4}, {3, 3}};
 
@@ -254,7 +245,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_printing) {
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_graphviz) {
-	using matrix::Graph;
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{4, 5}, {6, 3}, {2, 4}, {5, 2}, {6, 4}, {3, 3}};
 

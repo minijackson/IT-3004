@@ -2,8 +2,10 @@
 #define _GRAPH_LIB_MATRIX_GRAPH_HPP_
 
 #include "utility.hpp"
+#include "properties.hpp"
 #include "matrix_node.hpp"
 
+#include <map>
 #include <ostream>
 #include <set>
 #include <vector>
@@ -12,12 +14,18 @@
 
 namespace graph {
 	namespace matrix {
+		template <typename NodeProperty, typename EdgeProperty>
 		class Graph;
 	}
 }
 
-std::ostream& operator<<(std::ostream& os, graph::matrix::Graph graph);
-std::string makeDigraph(std::string name, graph::matrix::Graph graph);
+template <typename NodeProperty, typename EdgeProperty>
+std::ostream& operator<<(std::ostream& os,
+                         graph::matrix::Graph<NodeProperty, EdgeProperty> const& graph);
+
+template <typename NodeProperty, typename EdgeProperty>
+std::string makeDigraph(std::string name,
+                        graph::matrix::Graph<NodeProperty, EdgeProperty> const& graph);
 
 namespace graph {
 	/*! \brief Namespace used for the classes and types using a graph with an adjacency matrix as
@@ -27,10 +35,11 @@ namespace graph {
 
 		/*! \brief Represents a graph with an adjacency matrix as internal representation.
 		 */
+		template <typename NodeProperty, typename EdgeProperty>
 		class Graph {
 		public:
-			using Node_t      = Node;
-			using ConstNode_t = ConstNode;
+			using Node_t      = Node<NodeProperty>;
+			using ConstNode_t = ConstNode<NodeProperty>;
 
 			/*! \brief Create an empty graph
 			 */
@@ -119,43 +128,54 @@ namespace graph {
 			 * \param functor the function to call
 			 */
 			template <typename Functor>
-			void eachAdjacents(ConstNode vertex, Functor&& functor) const;
+			void eachAdjacents(ConstNode_t vertex, Functor&& functor) const;
 
 			/*! \brief Return a Node representing a node from this graph with a given name.
 			 *
 			 * \param nodeId The name of the node.
 			 * \return The Node representing the given node.
 			 */
-			Node operator[](size_t nodeId);
+			Node_t operator[](size_t nodeId);
 
 			/*! \brief Return a Node representing a node from this graph with a given name.
 			 *
 			 * \param nodeId The name of the node.
 			 * \return The Node representing the given node.
 			 */
-			ConstNode operator[](size_t nodeId) const;
+			ConstNode_t operator[](size_t nodeId) const;
 
 			/*! \brief Check if two graphs are equal.
 			 *
 			 * \param other The other graph to check for equality.
 			 * \return true if the two graphs are equal.
 			 */
-			bool operator==(Graph const& other) const;
+			template <typename OtherNodeProperty, typename OtherEdgeProperty>
+			bool operator==(Graph<OtherNodeProperty, OtherEdgeProperty> const& other) const;
 
 			/*! \brief Check if two graphs are not equal.
 			 *
 			 * \param other The other graph to check for equality.
 			 * \return true if the two graphs are not equal.
 			 */
-			bool operator!=(Graph const& other) const;
-
-			friend std::ostream&(::operator<<)(std::ostream& os, Graph graph);
+			template <typename OtherNodeProperty, typename OtherEdgeProperty>
+			bool operator!=(Graph<OtherNodeProperty, OtherEdgeProperty> const& other) const;
 
 		protected:
 			/*! \brief The matrix representing the connections in the graph.
 			 */
 			std::vector<std::vector<bool>> connections;
+
+			/*! \brief The properties of each nodes.
+			 */
+			std::vector<NodeProperty> nodeProperties;
+
+			/*! \brief The properties of each edges.
+			 */
+			std::map<std::pair<size_t, size_t>, EdgeProperty> edgeProperties;
 		};
+
+		using AstarGraph    = Graph<AstarNodeProperty, WeightedArcProperty>;
+		using WeightedGraph = Graph<void, WeightedArcProperty>;
 	}
 }
 
