@@ -102,8 +102,7 @@ namespace graph {
 			 * \param begin The node at the start of the edge.
 			 * \param end The node at the end of the edge.
 			 */
-			std::decay_t<EdgeProperty> getEdgeProperty(ConstNode_t const& begin,
-			                                           ConstNode_t const& end) const;
+			EdgeProperty getEdgeProperty(ConstNode_t const& begin, ConstNode_t const& end) const;
 
 			/*! \brief Set the property of the given edge.
 			 *

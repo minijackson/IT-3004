@@ -53,7 +53,7 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		std::decay_t<EdgeProperty> Graph<NodeProperty, EdgeProperty>::getEdgeProperty(
+		EdgeProperty Graph<NodeProperty, EdgeProperty>::getEdgeProperty(
 		        ConstNode_t const& begin,
 		        ConstNode_t const& end) const {
 			// Use .at() instead of operator[] because the method .at() throw if the key does not
