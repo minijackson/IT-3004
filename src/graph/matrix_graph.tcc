@@ -11,23 +11,80 @@ namespace graph {
 	namespace matrix {
 
 		template <typename NodeProperty, typename EdgeProperty>
-		template <typename... Arcs>
-		Graph<NodeProperty, EdgeProperty>::Graph(size_t nbVertices, Arcs... arcs)
+		template <typename... Edges>
+		Graph<NodeProperty, EdgeProperty>::Graph(size_t nbVertices, Edges... edges)
 		      : connections(nbVertices, std::vector<bool>(nbVertices, false)) {
-			addArcs(arcs...);
+			addEdges(edges...);
 		}
 
 		template <typename Candidate>
-		using is_convertible_to_arc = std::is_convertible<std::pair<size_t, size_t>, Candidate>;
+		using is_convertible_to_edge = std::is_convertible<std::pair<size_t, size_t>, Candidate>;
 
 		template <typename NodeProperty, typename EdgeProperty>
-		template <typename... Arcs>
-		inline void Graph<NodeProperty, EdgeProperty>::addArcs(std::pair<size_t, size_t> const& arc,
-		                                                       Arcs... arcs) {
-			static_assert(check_all_v<is_convertible_to_arc, Arcs...>,
-			              "The arguments of addArcs must be convertible to std::pair<int, int>");
-			connections[arc.first][arc.second] = true;
-			addArcs(arcs...);
+		template <typename... Edges>
+		inline void Graph<NodeProperty, EdgeProperty>::addEdges(
+		        std::pair<size_t, size_t> const& edge,
+		        Edges... edges) {
+			static_assert(check_all_v<is_convertible_to_edge, Edges...>,
+			              "The arguments of addEdges must be convertible to std::pair<int, int>");
+			addEdges(edge);
+			addEdges(edges...);
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
+		void Graph<NodeProperty, EdgeProperty>::addEdges(std::pair<size_t, size_t> const& edge) {
+			connections[edge.first][edge.second] = true;
+			edgeProperties[{edge.first, edge.second}] = EdgeProperty();
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
+		void Graph<NodeProperty, EdgeProperty>::addEdge(ConstNode_t const& begin,
+		                                                ConstNode_t const& end,
+		                                                EdgeProperty property) {
+			size_t beginId = begin.getId(), endId = end.getId();
+			connections[beginId][endId] = true;
+			edgeProperties[{beginId, endId}] = std::move(property);
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
+		void Graph<NodeProperty, EdgeProperty>::addEdge(ConstNode_t const& begin,
+		                                                ConstNode_t const& end) {
+			addEdge(begin, end, EdgeProperty());
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
+		std::decay_t<EdgeProperty> Graph<NodeProperty, EdgeProperty>::getEdgeProperty(
+		        ConstNode_t const& begin,
+		        ConstNode_t const& end) const {
+			// Use .at() instead of operator[] because the method .at() throw if the key does not
+			// exists, instead of inserting a new key, allowing "getEdgeProperty" to be const.
+			return edgeProperties.at({begin.getId(), end.getId()});
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
+		void Graph<NodeProperty, EdgeProperty>::setEdgeProperty(ConstNode_t const& begin,
+		                                                        ConstNode_t const& end,
+		                                                        EdgeProperty property) {
+			edgeProperties[{begin.getId(), end.getId()}] = std::move(property);
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
+		std::vector<std::vector<bool>> Graph<NodeProperty, EdgeProperty>::getConnections() const {
+			return connections;
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
+		size_t Graph<NodeProperty, EdgeProperty>::getVerticesCount() const {
+			return connections.size();
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
+		size_t Graph<NodeProperty, EdgeProperty>::getEdgesCount() const {
+			size_t count = 0;
+			for(auto const& subArray : connections) {
+				count += std::count(subArray.begin(), subArray.end(), true);
+			}
+			return count;
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
@@ -78,77 +135,35 @@ namespace graph {
 		      : connections(nbVertices, std::vector<bool>(nbVertices, false)) {}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		Graph<NodeProperty, EdgeProperty>::Graph(std::initializer_list<std::pair<size_t, size_t>> arcs) {
+		Graph<NodeProperty, EdgeProperty>::Graph(
+		        std::initializer_list<std::pair<size_t, size_t>> edges) {
 			size_t max = 0;
-			for(const auto& arc : arcs) {
-				if(arc.first > max) {
-					max = arc.first;
+			for(const auto& edge : edges) {
+				if(edge.first > max) {
+					max = edge.first;
 				}
 
-				if(arc.second > max) {
-					max = arc.second;
+				if(edge.second > max) {
+					max = edge.second;
 				}
 			}
 
 			connections =
 			        std::vector<std::vector<bool>>(max + 1, std::vector<bool>(max + 1, false));
 
-			for(const auto& arc : arcs) {
-				addArcs(arc);
+			for(const auto& edge : edges) {
+				addEdges(edge);
 			}
-		}
-
-		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::addArcs(std::pair<size_t, size_t> const& arc) {
-			connections[arc.first][arc.second] = true;
-		}
-
-		template <typename NodeProperty, typename EdgeProperty>
-		std::vector<std::vector<bool>> Graph<NodeProperty, EdgeProperty>::getConnections() const {
-			return connections;
-		}
-
-		template <typename NodeProperty, typename EdgeProperty>
-		size_t Graph<NodeProperty, EdgeProperty>::getVerticesCount() const {
-			return connections.size();
-		}
-
-		template <typename NodeProperty, typename EdgeProperty>
-		size_t Graph<NodeProperty, EdgeProperty>::getArcsCount() const {
-			size_t count = 0;
-			for(auto const& subArray : connections) {
-				count += std::count(subArray.begin(), subArray.end(), true);
-			}
-			return count;
-		}
-
-		template <typename NodeProperty, typename EdgeProperty>
-		Graph<NodeProperty, EdgeProperty> Graph<NodeProperty, EdgeProperty>::symmetric() const {
-			Graph<NodeProperty, EdgeProperty> symmetricGraph(connections.size());
-
-			size_t i = 0;
-			for(auto const& subArray : connections) {
-				size_t j = 0;
-				for(bool connection : subArray) {
-					if(connection) {
-						symmetricGraph.connections[j][i] = true;
-					}
-					++j;
-				}
-				++i;
-			}
-
-			return symmetricGraph;
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
 		auto Graph<NodeProperty, EdgeProperty>::operator[](size_t nodeId) -> Node_t {
-			return Node_t(nodeId, connections, nodeProperties[nodeId]);
+			return Node_t(nodeId, connections[nodeId], nodeProperties[nodeId]);
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
 		auto Graph<NodeProperty, EdgeProperty>::operator[](size_t nodeId) const -> ConstNode_t {
-			return ConstNode_t(nodeId, connections, nodeProperties[nodeId]);
+			return ConstNode_t(nodeId, connections[nodeId], nodeProperties[nodeId]);
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
@@ -164,8 +179,7 @@ namespace graph {
 		template <typename OtherNodeProperty, typename OtherEdgeProperty>
 		bool Graph<NodeProperty, EdgeProperty>::operator!=(
 		        Graph<OtherNodeProperty, OtherEdgeProperty> const& other) const {
-
-			return connections != other.connections;
+			return !(*this == other);
 		}
 	}
 }

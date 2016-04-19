@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_with_vertices_creation) {
 	{
 		Graph myGraph(1);
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 1);
-		BOOST_CHECK_EQUAL(myGraph.getArcsCount(), 0);
+		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 0);
 		BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 1);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[0].size(), 1);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[0][0], false);
@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_with_vertices_creation) {
 	{
 		Graph myGraph(10);
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 10);
-		BOOST_CHECK_EQUAL(myGraph.getArcsCount(), 0);
+		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 0);
 		BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 10);
 		for(size_t i = 0; i < 10; ++i) {
 			BOOST_CHECK_EQUAL(myGraph.getConnections()[i].size(), 10);
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_with_vertices_creation) {
 	{
 		Graph myGraph(100);
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 100);
-		BOOST_CHECK_EQUAL(myGraph.getArcsCount(), 0);
+		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 0);
 		BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 100);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[42].size(), 100);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[42][69], false);
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_with_vertices_and_edges_creation) {
 	{
 		Graph myGraph(1, std::pair<int,int>{0, 0});
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 1);
-		BOOST_CHECK_EQUAL(myGraph.getArcsCount(), 1);
+		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 1);
 		BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 1);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[0].size(), 1);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[0][0], true);
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_with_vertices_and_edges_creation) {
 		              std::pair<int, int>{8, 3});
 
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 10);
-		BOOST_CHECK_EQUAL(myGraph.getArcsCount(), 4);
+		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 4);
 		BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 10);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[0].size(), 10);
 
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_with_initializer_list) {
 	{
 		Graph myGraph{{0,0}};
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 1);
-		BOOST_CHECK_EQUAL(myGraph.getArcsCount(), 1);
+		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 1);
 		BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 1);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[0].size(), 1);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[0][0], true);
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_with_initializer_list) {
 		std::initializer_list<std::pair<size_t, size_t>> arcs{{1, 3}, {1, 4}, {2, 7}, {8, 3}};
 		Graph myGraph(arcs);
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 9);
-		BOOST_CHECK_EQUAL(myGraph.getArcsCount(), 4);
+		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 4);
 		BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 9);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[0].size(), 9);
 
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_symmetric) {
 
 	Graph myGraph{{1, 2}, {3, 4}, {5, 6}}, expected{{2, 1}, {4, 3}, {6, 5}};
 
-	BOOST_CHECK(myGraph.symmetric() == expected);
+	BOOST_CHECK(graph::symmetric(myGraph) == expected);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_strongly_connected_component) {
@@ -252,4 +252,19 @@ BOOST_AUTO_TEST_CASE(matrix_graph_graphviz) {
 	std::string expected = "digraph myGraph {\n2 -> 4\n3 -> 3\n4 -> 5\n5 -> 2\n6 -> 3\n6 -> 4\n}\n";
 
 	BOOST_CHECK_EQUAL(makeDigraph("myGraph", myGraph), expected);
+}
+
+BOOST_AUTO_TEST_CASE(matrix_weighted_graph) {
+	using Graph = matrix::Graph<NoProperty, WeightedProperty>;
+
+	Graph myGraph{{4, 5}, {6, 3}, {2, 4}, {5, 2}, {6, 4}, {3, 3}};
+
+	myGraph.setEdgeProperty(myGraph[2], myGraph[3], {5});
+
+	BOOST_CHECK_THROW(myGraph.getEdgeProperty(myGraph[0], myGraph[1]).weight, std::out_of_range);
+	BOOST_CHECK_THROW(myGraph.getEdgeProperty(myGraph[0], myGraph[2]).weight, std::out_of_range);
+	BOOST_CHECK_THROW(myGraph.getEdgeProperty(myGraph[3], myGraph[2]).weight, std::out_of_range);
+	BOOST_CHECK_THROW(myGraph.getEdgeProperty(myGraph[5], myGraph[1]).weight, std::out_of_range);
+
+	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph[2], myGraph[3]).weight, 5);
 }

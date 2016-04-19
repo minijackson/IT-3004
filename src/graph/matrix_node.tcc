@@ -23,7 +23,7 @@ namespace graph {
 		                                                    ParentConnections& connections,
 		                                                    NodeProperty& property)
 		      : id(id)
-		      , connections(connections[id])
+		      , connections(connections)
 		      , property(property) {}
 
 		template <typename NodeProperty, typename Connections>
@@ -37,7 +37,7 @@ namespace graph {
 		template <typename OtherNodeProperty, typename OtherConnections>
 		bool GenericNode<NodeProperty, Connections>::operator<(
 		        GenericNode<OtherNodeProperty, OtherConnections> other) const {
-			return (id < other.id);
+			return id < other.id;
 		}
 
 		template <typename NodeProperty, typename Connections>
@@ -66,15 +66,14 @@ namespace graph {
 			return connections;
 		}
 
-		template <typename NodeProperty>
-		ConstNode<NodeProperty>::ConstNode(size_t id,
-		                                   std::vector<std::vector<bool>> const& connections,
-		                                   NodeProperty const& property)
-		      : ParentClass(id, connections, property) {}
+		template <typename NodeProperty, typename Connections>
+		NodeProperty GenericNode<NodeProperty, Connections>::getProperty() const {
+			return property;
+		}
 
 		template <typename NodeProperty>
 		Node<NodeProperty>::Node(size_t id,
-		                         std::vector<std::vector<bool>>& connections,
+		                         std::vector<bool>& connections,
 		                         NodeProperty& property)
 		      : ParentClass(id, connections, property) {}
 
@@ -87,5 +86,20 @@ namespace graph {
 		void Node<NodeProperty>::disconnectFrom(size_t otherId) {
 			this->connections[otherId] = false;
 		}
+
+		template <typename NodeProperty>
+		NodeProperty& Node<NodeProperty>::getProperty() {
+			return this->property;
+		}
+
+		template <typename NodeProperty>
+		ConstNode<NodeProperty>::ConstNode(size_t id,
+		                                   std::vector<bool> const& connections,
+		                                   NodeProperty const& property)
+		      : ParentClass(id, connections, property) {}
+
+		template <typename NodeProperty>
+		ConstNode<NodeProperty>::ConstNode(Node<NodeProperty> other)
+		      : ParentClass(other.id, other.connections, other.property) {}
 	}
 }

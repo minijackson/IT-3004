@@ -1,7 +1,6 @@
 #include "graph.hpp"
 #include "algorithms.hpp"
 
-#include <iostream>
 #include <set>
 #include <sstream>
 #include <vector>
@@ -14,19 +13,19 @@
 using namespace graph;
 
 BOOST_AUTO_TEST_CASE(empty_list_graph_creation) {
-	using list::Graph;
+	using Graph = list::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph;
 	BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 0);
 }
 
 BOOST_AUTO_TEST_CASE(list_graph_with_vertices_creation) {
-	using list::Graph;
+	using Graph = list::Graph<NoProperty, NoProperty>;
 
 	{
 		Graph myGraph(1);
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 1);
-		BOOST_CHECK_EQUAL(myGraph.getArcsCount(), 0);
+		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 0);
 		BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 1);
 		BOOST_CHECK(myGraph.getConnections()[0].empty());
 	}
@@ -34,7 +33,7 @@ BOOST_AUTO_TEST_CASE(list_graph_with_vertices_creation) {
 	{
 		Graph myGraph(10);
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 10);
-		BOOST_CHECK_EQUAL(myGraph.getArcsCount(), 0);
+		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 0);
 		BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 10);
 		for(size_t i = 0; i < 10; ++i) {
 			BOOST_CHECK(myGraph.getConnections()[i].empty());
@@ -44,7 +43,7 @@ BOOST_AUTO_TEST_CASE(list_graph_with_vertices_creation) {
 	{
 		Graph myGraph(100);
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 100);
-		BOOST_CHECK_EQUAL(myGraph.getArcsCount(), 0);
+		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 0);
 		BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 100);
 		for(size_t i = 0; i < 100; ++i) {
 			BOOST_CHECK(myGraph.getConnections()[i].empty());
@@ -53,12 +52,12 @@ BOOST_AUTO_TEST_CASE(list_graph_with_vertices_creation) {
 }
 
 BOOST_AUTO_TEST_CASE(list_graph_with_vertices_and_edges_creation) {
-	using list::Graph;
+	using Graph = list::Graph<NoProperty, NoProperty>;
 
 	{
 		Graph myGraph(1, std::pair<int,int>{0, 0});
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 1);
-		BOOST_CHECK_EQUAL(myGraph.getArcsCount(), 1);
+		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 1);
 		BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 1);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[0].front(), 0);
 	}
@@ -72,7 +71,7 @@ BOOST_AUTO_TEST_CASE(list_graph_with_vertices_and_edges_creation) {
 		              std::pair<int, int>{8, 3});
 
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 10);
-		BOOST_CHECK_EQUAL(myGraph.getArcsCount(), 4);
+		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 4);
 		BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 10);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[0].size(), 0);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[1].size(), 2);
@@ -91,12 +90,12 @@ BOOST_AUTO_TEST_CASE(list_graph_with_vertices_and_edges_creation) {
 }
 
 BOOST_AUTO_TEST_CASE(list_graph_with_initializer_list) {
-	using list::Graph;
+	using Graph = list::Graph<NoProperty, NoProperty>;
 
 	{
 		Graph myGraph{{0,0}};
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 1);
-		BOOST_CHECK_EQUAL(myGraph.getArcsCount(), 1);
+		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 1);
 		BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 1);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[0].size(), 1);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[0].front(), 0);
@@ -106,7 +105,7 @@ BOOST_AUTO_TEST_CASE(list_graph_with_initializer_list) {
 		std::initializer_list<std::pair<size_t, size_t>> arcs{{1, 3}, {1, 4}, {2, 7}, {8, 3}};
 		Graph myGraph(arcs);
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 9);
-		BOOST_CHECK_EQUAL(myGraph.getArcsCount(), 4);
+		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 4);
 		BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 9);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[0].size(), 0);
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[1].size(), 2);
@@ -122,18 +121,16 @@ BOOST_AUTO_TEST_CASE(list_graph_with_initializer_list) {
 }
 
 BOOST_AUTO_TEST_CASE(list_graph_symmetric) {
-	using list::Graph;
-	using list::Node;
+	using Graph = list::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{1, 2}, {3, 4}, {5, 6}}, expected{{2, 1}, {4, 3}, {6, 5}};
 
-	BOOST_CHECK(myGraph.symmetric() == expected);
+	BOOST_CHECK(graph::symmetric(myGraph) == expected);
 }
 
 BOOST_AUTO_TEST_CASE(list_graph_strongly_connected_component) {
-	using list::Graph;
-	using list::Node;
-	using list::ConstNode;
+	using Graph = list::Graph<NoProperty, NoProperty>;
+	using ConstNode = Graph::ConstNode_t;
 
 	const Graph myGraph{{0, 1}, {0, 5}, {1, 2}, {2, 5}, {3, 1}, {3, 2}, {4, 2}, {5, 1}, {5, 3}, {5, 4}};
 	std::set<ConstNode> expectedFor0{myGraph[0]},
@@ -146,9 +143,8 @@ BOOST_AUTO_TEST_CASE(list_graph_strongly_connected_component) {
 }
 
 BOOST_AUTO_TEST_CASE(list_graph_connected_component) {
-	using list::Graph;
-	using list::Node;
-	using list::ConstNode;
+	using Graph = list::Graph<NoProperty, NoProperty>;
+	using ConstNode = Graph::ConstNode_t;
 
 	const Graph myGraph{{0, 1}, {1, 2}, {2, 0}, {3, 4}, {4, 3}, {5, 6}, {7, 7}};
 	std::set<ConstNode> expectedFor0{myGraph[0], myGraph[1], myGraph[2]},
@@ -166,8 +162,8 @@ BOOST_AUTO_TEST_CASE(list_graph_connected_component) {
 }
 
 BOOST_AUTO_TEST_CASE(list_graph_subscript_operator) {
-	using list::Graph;
-	using list::Node;
+	using Graph = list::Graph<NoProperty, NoProperty>;
+	using Node = Graph::Node_t;
 
 	Graph myGraph{{1, 2}, {3, 4}, {5, 6}};
 	Node firstNode = myGraph[0];
@@ -176,8 +172,7 @@ BOOST_AUTO_TEST_CASE(list_graph_subscript_operator) {
 }
 
 BOOST_AUTO_TEST_CASE(list_graph_equal_to_operator) {
-	using list::Graph;
-	using list::Node;
+	using Graph = list::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{6, 5}, {4, 3}, {2, 1}}, myOtherGraph{{4, 3}, {6, 5}, {2, 1}};
 
@@ -185,8 +180,7 @@ BOOST_AUTO_TEST_CASE(list_graph_equal_to_operator) {
 }
 
 BOOST_AUTO_TEST_CASE(list_graph_not_equal_to_operator) {
-	using list::Graph;
-	using list::Node;
+	using Graph = list::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{6, 5}, {4, 3}, {2, 1}}, myOtherGraph{{7, 6}, {4, 3}, {2, 1}};
 
@@ -194,8 +188,7 @@ BOOST_AUTO_TEST_CASE(list_graph_not_equal_to_operator) {
 }
 
 BOOST_AUTO_TEST_CASE(list_node_get_id) {
-	using list::Graph;
-	using list::Node;
+	using Graph = list::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{0, 0}, {1, 1}, {2, 2}, {3, 3}};
 
@@ -206,8 +199,7 @@ BOOST_AUTO_TEST_CASE(list_node_get_id) {
 }
 
 BOOST_AUTO_TEST_CASE(list_node_is_connected_to) {
-	using list::Graph;
-	using list::Node;
+	using Graph = list::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{0, 0}, {1, 3}, {5, 7}, {2, 0}};
 
@@ -217,8 +209,7 @@ BOOST_AUTO_TEST_CASE(list_node_is_connected_to) {
 }
 
 BOOST_AUTO_TEST_CASE(list_node_connect_disconnect) {
-	using list::Graph;
-	using list::Node;
+	using Graph = list::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{6, 2}, {3, 1}, {4, 2}};
 
@@ -233,8 +224,7 @@ BOOST_AUTO_TEST_CASE(list_node_connect_disconnect) {
 }
 
 BOOST_AUTO_TEST_CASE(list_node_get_arcs) {
-	using list::Graph;
-	using list::Node;
+	using Graph = list::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{4, 5}, {6, 3}, {2, 4}, {5, 2}, {6, 4}, {3, 3}};
 
@@ -244,7 +234,7 @@ BOOST_AUTO_TEST_CASE(list_node_get_arcs) {
 }
 
 BOOST_AUTO_TEST_CASE(list_graph_printing) {
-	using list::Graph;
+	using Graph = list::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{4, 5}, {6, 3}, {2, 4}, {5, 2}, {6, 4}, {3, 3}};
 
@@ -256,7 +246,7 @@ BOOST_AUTO_TEST_CASE(list_graph_printing) {
 }
 
 BOOST_AUTO_TEST_CASE(list_graph_graphviz) {
-	using list::Graph;
+	using Graph = list::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{4, 5}, {6, 3}, {2, 4}, {5, 2}, {6, 4}, {3, 3}};
 

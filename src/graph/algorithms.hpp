@@ -8,6 +8,23 @@
 
 namespace graph {
 
+	/*! \brief Return the symmetric graph of the current graph.
+	 *
+	 * \param graph The Graph from which to create the symmetric graph.
+	 * \return the symmetric graph of the current graph.
+	 */
+	template <typename Graph>
+	std::decay_t<Graph> symmetric(Graph const& g) {
+		std::decay_t<Graph> symmetricGraph(g.getVerticesCount());
+		using ConstNode = typename Graph::ConstNode_t;
+
+		g.eachEdges([&symmetricGraph, &g](ConstNode begin, ConstNode end) {
+			symmetricGraph.addEdge(end, begin, g.getEdgeProperty(begin, end));
+		});
+
+		return symmetricGraph;
+	}
+
 	/*! \brief Get the strongly connected component of a given vertex.
 	 *
 	 * \param g The graph from which we want the strongly connected component.
@@ -37,7 +54,7 @@ namespace graph {
 		}
 
 		verticesToCheck = std::set<Node>{vertex};
-		Graph sym       = g.symmetric();
+		Graph sym       = symmetric(g);
 
 		while(!verticesToCheck.empty()) {
 			auto currentVertex = *verticesToCheck.begin();
@@ -75,7 +92,7 @@ namespace graph {
 
 		std::set<Node> verticesToCheck{vertex}, component{vertex};
 
-		Graph sym = g.symmetric();
+		Graph sym = symmetric(g);
 
 		while(!verticesToCheck.empty()) {
 			auto currentVertex = *verticesToCheck.begin();

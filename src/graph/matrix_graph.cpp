@@ -4,8 +4,8 @@ namespace graph {
 	namespace matrix {
 
 		template class Graph<NoProperty, NoProperty>;
-		template class Graph<NoProperty, WeightedArcProperty>;
-		template class Graph<AstarNodeProperty, WeightedArcProperty>;
+		template class Graph<NoProperty, WeightedProperty>;
+		template class Graph<AstarNodeProperty, WeightedProperty>;
 
 	}
 }

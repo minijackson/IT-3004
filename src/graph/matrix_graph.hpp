@@ -51,35 +51,68 @@ namespace graph {
 			 */
 			explicit Graph(size_t nbVertices);
 
-			/*! \brief Create a graph with a certain number of vertices and some arcs.
+			/*! \brief Create a graph with a certain number of vertices and some edges.
 			 *
 			 * \param nbVertices the number of vertices in the graph.
-			 * \param arcs the arcs to add in the graph.
+			 * \param edges the edges to add in the graph.
 			 */
-			template <typename... Arcs>
-			explicit Graph(size_t nbVertices, Arcs... arcs);
+			template <typename... Edges>
+			explicit Graph(size_t nbVertices, Edges... edges);
 
-			/*! \brief Create a graph with some arcs.
+			/*! \brief Create a graph with some edges.
 			 *
-			 * \param arcs the arcs to add in the graph.
+			 * \param edges the edges to add in the graph.
 			 */
-			Graph(std::initializer_list<std::pair<size_t, size_t>> arcs);
+			Graph(std::initializer_list<std::pair<size_t, size_t>> edges);
 
-			/*! \brief Add an arc to the graph.
+			/*! \brief Add an edge to the graph.
 			 *
-			 * \param arc A pair whose first element is the starting vertex, and the second
+			 * \param edge A pair whose first element is the starting vertex, and the second
 			 *        element is the end vertex.
 			 */
-			void addArcs(std::pair<size_t, size_t> const& arc);
+			void addEdges(std::pair<size_t, size_t> const& edge);
 
-			/*! \brief Add several arcs to the graph.
+			/*! \brief Add several edges to the graph.
 			 *
-			 * \param arc An arc.
-			 * \param arcs More arcs.
-			 * \sa addArcs(std::pair<size_t, size_t>)
+			 * \param edge An edge.
+			 * \param edges More edges.
+			 * \sa addEdges(std::pair<size_t, size_t>)
 			 */
-			template <typename... Arcs>
-			inline void addArcs(std::pair<size_t, size_t> const& arc, Arcs... arcs);
+			template <typename... Edges>
+			inline void addEdges(std::pair<size_t, size_t> const& edge, Edges... edges);
+
+			/*! \brief Add an edge to the graph.
+			 *
+			 * \param begin The Node at the start of the edge.
+			 * \param end The Node at the end of the edge.
+			 * \param property The property to assign to the edge.
+			 */
+			void addEdge(ConstNode_t const& begin, ConstNode_t const& end, EdgeProperty property);
+
+			/*! \brief Add an edge to the graph.
+			 *
+			 * \param begin The Node at the start of the edge
+			 * \param end The Node at the end of the edge
+			 */
+			void addEdge(ConstNode_t const& begin, ConstNode_t const& end);
+
+			/*! \brief Get the property of a given edge.
+			 *
+			 * \param begin The node at the start of the edge.
+			 * \param end The node at the end of the edge.
+			 */
+			std::decay_t<EdgeProperty> getEdgeProperty(ConstNode_t const& begin,
+			                                           ConstNode_t const& end) const;
+
+			/*! \brief Set the property of the given edge.
+			 *
+			 * \param begin The node at the start of the edge.
+			 * \param end The node at the end of the edge.
+			 * \param property The property to set.
+			 */
+			void setEdgeProperty(ConstNode_t const& begin,
+			                     ConstNode_t const& end,
+			                     EdgeProperty property);
 
 			/*! \brief Get the matrix of connections for this graph.
 			 */
@@ -91,17 +124,11 @@ namespace graph {
 			 */
 			size_t getVerticesCount() const;
 
-			/*! \brief Get the number of arcs in the graph.
+			/*! \brief Get the number of edges in the graph.
 			 *
-			 * \return the number of arcs in the graph.
+			 * \return the number of edges in the graph.
 			 */
-			size_t getArcsCount() const;
-
-			/*! \brief Return the symmetric graph of the current graph.
-			 *
-			 * \return the symmetric graph of the current graph.
-			 */
-			Graph symmetric() const;
+			size_t getEdgesCount() const;
 
 			/*! Call a given function for each vertices.
 			 *
@@ -165,6 +192,7 @@ namespace graph {
 			 */
 			std::vector<std::vector<bool>> connections;
 
+
 			/*! \brief The properties of each nodes.
 			 */
 			std::vector<NodeProperty> nodeProperties;
@@ -174,8 +202,8 @@ namespace graph {
 			std::map<std::pair<size_t, size_t>, EdgeProperty> edgeProperties;
 		};
 
-		using AstarGraph    = Graph<AstarNodeProperty, WeightedArcProperty>;
-		using WeightedGraph = Graph<void, WeightedArcProperty>;
+		using AstarGraph    = Graph<AstarNodeProperty, WeightedProperty>;
+		using WeightedGraph = Graph<void, WeightedProperty>;
 	}
 }
 

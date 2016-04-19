@@ -77,10 +77,16 @@ namespace graph {
 			 */
 			std::vector<bool> getConnections() const;
 
+			/*! \brief Return the property of the current Node.
+			 *
+			 * \return The current node's property.
+			 */
+			NodeProperty getProperty() const;
+
 		protected:
 			/*! \brief The name of the node to reference.
 			 */
-			size_t id;
+			size_t const id;
 
 			/*! \brief The matrix representing the connections in the graph.
 			 */
@@ -92,18 +98,7 @@ namespace graph {
 		};
 
 		template <typename NodeProperty>
-		class ConstNode : public GenericNode<NodeProperty const&, std::vector<bool> const&> {
-			using ParentClass = GenericNode<NodeProperty const&, std::vector<bool> const&>;
-		public:
-			/*! \brief Node default constructor.
-			 *
-			 * \param id The name of the node to reference.
-			 * \param connections A reference to the boolean matrix of the parent Graph.
-			 */
-			ConstNode(size_t id,
-			          std::vector<std::vector<bool>> const& connections,
-			          NodeProperty const& property);
-		};
+		class ConstNode;
 
 		template <typename NodeProperty>
 		class Node : public GenericNode<NodeProperty&, std::vector<bool>&> {
@@ -114,7 +109,7 @@ namespace graph {
 			 * \param id The name of the node to reference.
 			 * \param connections A reference to the boolean matrix of the parent Graph.
 			 */
-			Node(size_t id, std::vector<std::vector<bool>>& connections, NodeProperty& property);
+			Node(size_t id, std::vector<bool>& connections, NodeProperty& property);
 
 			/*! \brief Connect the current node to the given node.
 			 *
@@ -127,6 +122,34 @@ namespace graph {
 			 * \param otherId The other node to disconnect from.
 			 */
 			void disconnectFrom(size_t otherId);
+
+			/*! \brief Return the property of the current Node.
+			 *
+			 * \return A reference to the current node's property.
+			 */
+			NodeProperty& getProperty();
+
+			friend ConstNode<NodeProperty>;
+		};
+
+		template <typename NodeProperty>
+		class ConstNode : public GenericNode<NodeProperty const&, std::vector<bool> const&> {
+			using ParentClass = GenericNode<NodeProperty const&, std::vector<bool> const&>;
+		public:
+			/*! \brief Node default constructor.
+			 *
+			 * \param id The name of the node to reference.
+			 * \param connections A reference to the boolean matrix of the parent Graph.
+			 */
+			ConstNode(size_t id,
+			          std::vector<bool> const& connections,
+			          NodeProperty const& property);
+
+			/*! \brief Convert a Node to a ConstNode.
+			 *
+			 * \param other The Node to convert.
+			 */
+			ConstNode(Node<NodeProperty> other);
 		};
 	}
 }

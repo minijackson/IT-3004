@@ -2,7 +2,6 @@
 #define _GRAPH_LIB_LIST_NODE_HPP_
 
 #include <list>
-#include <vector>
 
 #include <cstddef>
 
@@ -15,19 +14,19 @@ namespace graph {
 		 * Therefore, like an iterator, using this object after the destruction of the parent Graph
 		 * will result in a dandling reference.
 		 */
-		template <typename Connections>
+		template <typename NodeProperty, typename Connections>
 		class GenericNode {
 		public:
-			friend class GenericNode<std::list<size_t>&>;
-			friend class GenericNode<std::list<size_t> const&>;
+			friend class GenericNode<NodeProperty, std::list<size_t>&>;
+			friend class GenericNode<NodeProperty, std::list<size_t> const&>;
 
 			GenericNode() = delete;
 
-			template <typename OtherConnections>
-			GenericNode(GenericNode<OtherConnections>& other);
+			template <typename OtherNodeProperty, typename OtherConnections>
+			GenericNode(GenericNode<OtherNodeProperty, OtherConnections>& other);
 
-			template <typename OtherConnections>
-			GenericNode(GenericNode<OtherConnections>&& other);
+			template <typename OtherNodeProperty, typename OtherConnections>
+			GenericNode(GenericNode<OtherNodeProperty, OtherConnections>&& other);
 
 			/*! \brief Node default constructor.
 			 *
@@ -35,7 +34,7 @@ namespace graph {
 			 * \param connections A reference to the boolean matrix of the parent Graph.
 			 */
 			template <typename ParentConnections>
-			GenericNode(size_t id, ParentConnections& connections);
+			GenericNode(size_t id, ParentConnections& connections, NodeProperty& property);
 
 			/*! \brief Return true if two nodes are the same node.
 			 *
@@ -44,16 +43,16 @@ namespace graph {
 			 * \param other the other node to compare to.
 			 * \return true if the two nodes are the same node from the same graph
 			 */
-			template <typename OtherConnections>
-			bool operator==(GenericNode<OtherConnections> other) const;
+			template <typename OtherNodeProperty, typename OtherConnections>
+			bool operator==(GenericNode<OtherNodeProperty, OtherConnections> other) const;
 
 			/*! \brief Compare two nodes arbitrarily.
 			 *
 			 * \param other the other node to compare to.
 			 * \return true or false.
 			 */
-			template <typename OtherConnections>
-			bool operator<(GenericNode<OtherConnections> other) const;
+			template <typename OtherNodeProperty, typename OtherConnections>
+			bool operator<(GenericNode<OtherNodeProperty, OtherConnections> other) const;
 
 			/*! \brief Return true if the current node is connected to the given node.
 			 *
@@ -80,6 +79,12 @@ namespace graph {
 			 */
 			std::list<size_t> getConnections() const;
 
+			/*! \brief Return the property of the current Node.
+			 *
+			 * \return The current node's property.
+			 */
+			NodeProperty getProperty() const;
+
 		protected:
 			/*! \brief The name of the node to reference.
 			 */
@@ -88,26 +93,25 @@ namespace graph {
 			/*! \brief The matrix representing the connections in the graph.
 			 */
 			Connections connections;
+
+			/*! \brief The property of the current node.
+			 */
+			NodeProperty property;
 		};
 
-		class ConstNode : public GenericNode<std::list<size_t> const&> {
+		template <typename NodeProperty>
+		class ConstNode;
+
+		template <typename NodeProperty>
+		class Node : public GenericNode<NodeProperty&, std::list<size_t>&> {
+			using ParentClass = GenericNode<NodeProperty&, std::list<size_t>&>;
 		public:
 			/*! \brief Node default constructor.
 			 *
 			 * \param id The name of the node to reference.
 			 * \param connections A reference to the boolean matrix of the parent Graph.
 			 */
-			ConstNode(size_t id, std::vector<std::list<size_t>> const& connections);
-		};
-
-		class Node : public GenericNode<std::list<size_t>&> {
-		public:
-			/*! \brief Node default constructor.
-			 *
-			 * \param id The name of the node to reference.
-			 * \param connections A reference to the boolean matrix of the parent Graph.
-			 */
-			Node(size_t id, std::vector<std::list<size_t>>& connections);
+			Node(size_t id, std::list<size_t>& connections, NodeProperty& property);
 
 			/*! \brief Connect the current node to the given node.
 			 *
@@ -120,6 +124,34 @@ namespace graph {
 			 * \param otherId The other node to disconnect from.
 			 */
 			void disconnectFrom(size_t otherId);
+
+			/*! \brief Return the property of the current Node.
+			 *
+			 * \return A reference to the current node's property.
+			 */
+			NodeProperty& getProperty();
+
+			friend ConstNode<NodeProperty>;
+		};
+
+		template <typename NodeProperty>
+		class ConstNode : public GenericNode<NodeProperty const&, std::list<size_t> const&> {
+			using ParentClass = GenericNode<NodeProperty const&, std::list<size_t> const&>;
+		public:
+			/*! \brief Node default constructor.
+			 *
+			 * \param id The name of the node to reference.
+			 * \param connections A reference to the boolean matrix of the parent Graph.
+			 */
+			ConstNode(size_t id,
+			          std::list<size_t> const& connections,
+			          NodeProperty const& property);
+
+			/*! \brief Convert a Node to a ConstNode.
+			 *
+			 * \param other The Node to convert.
+			 */
+			ConstNode(Node<NodeProperty> other);
 		};
 	}
 }

@@ -2,7 +2,7 @@
 #define GRAPH_LIB_PROPERTIES_HPP
 
 namespace graph {
-		struct WeightedArcProperty {
+		struct WeightedProperty {
 			int weight;
 		};
 
