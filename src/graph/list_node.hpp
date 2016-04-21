@@ -2,6 +2,7 @@
 #define _GRAPH_LIB_LIST_NODE_HPP_
 
 #include <list>
+#include <string>
 
 #include <cstddef>
 
@@ -34,14 +35,17 @@ namespace graph {
 			 * \param connections A reference to the boolean matrix of the parent Graph.
 			 */
 			template <typename ParentConnections>
-			GenericNode(size_t id, ParentConnections& connections, NodeProperty& property);
+			GenericNode(size_t id,
+			            ParentConnections& connections,
+			            std::string name,
+			            NodeProperty& property);
 
-			/*! \brief Return true if two nodes are the same node.
+			/*! \brief Return true if two nodes are the same node (by name).
 			 *
 			 * This function will not check if the nodes are from the same graph.
 			 *
 			 * \param other the other node to compare to.
-			 * \return true if the two nodes are the same node from the same graph
+			 * \return true if the two nodes are the same node.
 			 */
 			template <typename OtherNodeProperty, typename OtherConnections>
 			bool operator==(GenericNode<OtherNodeProperty, OtherConnections> other) const;
@@ -59,19 +63,19 @@ namespace graph {
 			 * \param otherId the other node to check.
 			 * \return true if the current node is connected to the given node.
 			 */
-			bool isConnectedTo(size_t otherId) const;
+			bool isConnectedTo(GenericNode<NodeProperty, Connections> const& other) const;
 
-			/*! \brief Get the arcs which have the current node as starting point.
+			/*! \brief Get the id of the current node.
 			 *
-			 * \return The list of arcs which have the current node as starting point.
+			 * \return The id of the current node.
 			 */
-			std::list<size_t> getArcs() const;
+			size_t getId() const;
 
 			/*! \brief Get the name of the current node.
 			 *
 			 * \return The name of the current node.
 			 */
-			size_t getId() const;
+			std::string getName() const;
 
 			/*! \brief Return the internal boolean matrix.
 			 *
@@ -94,6 +98,10 @@ namespace graph {
 			 */
 			Connections connections;
 
+			/*! \brief The name of the node to refer.
+			 */
+			std::string const name;
+
 			/*! \brief The property of the current node.
 			 */
 			NodeProperty property;
@@ -110,20 +118,13 @@ namespace graph {
 			 *
 			 * \param id The name of the node to reference.
 			 * \param connections A reference to the boolean matrix of the parent Graph.
+			 * \param name The name of the node.
+			 * \param property The property of the node.
 			 */
-			Node(size_t id, std::list<size_t>& connections, NodeProperty& property);
-
-			/*! \brief Connect the current node to the given node.
-			 *
-			 * \param otherId The other node to connect to.
-			 */
-			void connectTo(size_t otherId);
-
-			/*! \brief Disconnect the current node from the given node.
-			 *
-			 * \param otherId The other node to disconnect from.
-			 */
-			void disconnectFrom(size_t otherId);
+			Node(size_t id,
+			     std::list<size_t>& connections,
+			     std::string name,
+			     NodeProperty& property);
 
 			/*! \brief Return the property of the current Node.
 			 *
@@ -145,6 +146,7 @@ namespace graph {
 			 */
 			ConstNode(size_t id,
 			          std::list<size_t> const& connections,
+			          std::string name,
 			          NodeProperty const& property);
 
 			/*! \brief Convert a Node to a ConstNode.

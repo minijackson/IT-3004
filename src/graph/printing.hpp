@@ -12,7 +12,7 @@ std::ostream& operator<<(std::ostream& os,
 	using ConstNode = typename graph::matrix::Graph<NodeProperty, EdgeProperty>::ConstNode_t;
 
 	graph.eachEdges([&os](ConstNode start, ConstNode end) {
-		os << start.getId() << " -> " << end.getId() << std::endl;
+		os << start.getName() << " -> " << end.getName() << std::endl;
 	});
 
 	return os;
@@ -34,7 +34,7 @@ std::ostream& operator<<(std::ostream& os,
 	using ConstNode = typename graph::list::Graph<NodeProperty, EdgeProperty>::ConstNode_t;
 
 	graph.eachEdges([&os](ConstNode start, ConstNode end) {
-		os << start.getId() << " -> " << end.getId() << std::endl;
+		os << start.getName() << " -> " << end.getName() << std::endl;
 	});
 
 	return os;
