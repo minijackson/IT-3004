@@ -63,6 +63,12 @@ namespace graph {
 			 *
 			 * \param node The name of the node to add.
 			 */
+			void addNode(std::string nodeName, NodeProperty property);
+
+			/*! \brief Add a node to the graph.
+			 *
+			 * \param node The name of the node to add.
+			 */
 			void addNode(std::string nodeName);
 
 			/*! \brief Add an edge to the graph.

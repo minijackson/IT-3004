@@ -2,6 +2,7 @@
 #include "algorithms.hpp"
 
 #include <set>
+#include <sstream>
 #include <vector>
 
 #define BOOST_TEST_DYN_LINK
@@ -137,38 +138,188 @@ BOOST_AUTO_TEST_CASE(matrix_graph_connected_component) {
 	BOOST_CHECK(graph::connectedComponent(myGraph, myGraph["7"]) == expectedFor7);
 }
 
+BOOST_AUTO_TEST_CASE(matrix_graph_get_id) {
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
+
+	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
+
+	BOOST_CHECK_EQUAL(myGraph.getId("1"), 5);
+	BOOST_CHECK_EQUAL(myGraph.getId("2"), 4);
+	BOOST_CHECK_EQUAL(myGraph.getId("3"), 3);
+	BOOST_CHECK_EQUAL(myGraph.getId("4"), 2);
+	BOOST_CHECK_EQUAL(myGraph.getId("5"), 1);
+	BOOST_CHECK_EQUAL(myGraph.getId("6"), 0);
+	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 6);
+	BOOST_CHECK_EQUAL(myGraph.getId("7"), 6);
+	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 7);
+	BOOST_CHECK_EQUAL(myGraph.getId("8"), 7);
+	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 8);
+}
+
+BOOST_AUTO_TEST_CASE(matrix_graph_const_get_id) {
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
+
+	const Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
+
+	BOOST_CHECK_EQUAL(myGraph.getId("1"), 5);
+	BOOST_CHECK_EQUAL(myGraph.getId("2"), 4);
+	BOOST_CHECK_EQUAL(myGraph.getId("3"), 3);
+	BOOST_CHECK_EQUAL(myGraph.getId("4"), 2);
+	BOOST_CHECK_EQUAL(myGraph.getId("5"), 1);
+	BOOST_CHECK_EQUAL(myGraph.getId("6"), 0);
+	BOOST_CHECK_THROW(myGraph.getId("7"), std::out_of_range);
+	BOOST_CHECK_THROW(myGraph.getId("8"), std::out_of_range);
+}
+
 BOOST_AUTO_TEST_CASE(matrix_graph_subscript_operator) {
 	using Graph = matrix::Graph<NoProperty, NoProperty>;
 	using Node = Graph::Node_t;
 
 	Graph myGraph{{"1", "2"}, {"3", "4"}, {"5", "6"}};
-	Node firstNode = myGraph["0"];
+	Node firstNode = myGraph["1"];
 
-	BOOST_CHECK(myGraph.getConnections()[firstNode.getId()] == firstNode.getConnections());
+	BOOST_CHECK(myGraph.getConnections()[0] == firstNode.getConnections());
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_equal_to_operator) {
 	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}},
-	        myOtherGraph{{"4", "3"}, {"6", "5"}, {"2", "1"}};
+		    myOtherGraph{{"4", "3"}, {"6", "5"}, {"2", "1"}},
+		    myOtherOtherGraph{{"4", "3"}, {"6", "5"}, {"2", "0"}};
 
 	BOOST_CHECK(myGraph == myOtherGraph);
+	BOOST_CHECK(!(myGraph == myOtherOtherGraph));
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_not_equal_to_operator) {
 	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}},
-	        myOtherGraph{{"7", "6"}, {"4", "3"}, {"2", "1"}};
+		    myOtherGraph{{"7", "6"}, {"4", "3"}, {"2", "1"}},
+			myOtherOtherGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
 
 	BOOST_CHECK(myGraph != myOtherGraph);
+	BOOST_CHECK(!(myGraph != myOtherOtherGraph));
+}
+
+BOOST_AUTO_TEST_CASE(matrix_graph_add_node) {
+	using Graph = matrix::Graph<WeightedProperty, NoProperty>;
+
+
+	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
+
+	myGraph.addNode("Hello");
+	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 7);
+	BOOST_CHECK_EQUAL(myGraph["Hello"].getProperty().weight, 0);
+	myGraph.addNode("World", {5});
+	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 8);
+	BOOST_CHECK_EQUAL(myGraph["World"].getProperty().weight, 5);
+}
+
+BOOST_AUTO_TEST_CASE(matrix_graph_add_edges) {
+	using Graph = matrix::Graph<NoProperty, WeightedProperty>;
+
+
+	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
+
+	myGraph.addEdges({"Hello", "World"});
+	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 4);
+	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 8);
+	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["Hello"], myGraph["World"]).weight, 0);
+	myGraph.addEdges({"World", "Hello"});
+	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 5);
+	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 8);
+	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["World"], myGraph["Hello"]).weight, 0);
+}
+
+BOOST_AUTO_TEST_CASE(matrix_graph_connect) {
+	using Graph = matrix::Graph<NoProperty, WeightedProperty>;
+
+	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
+
+	myGraph.connect(myGraph["3"], myGraph["2"]);
+	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 4);
+	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 6);
+	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["3"], myGraph["2"]).weight, 0);
+	myGraph.connect(myGraph["5"], myGraph["4"], {42});
+	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 5);
+	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 6);
+	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["5"], myGraph["4"]).weight, 42);
+}
+
+BOOST_AUTO_TEST_CASE(matrix_graph_set_edge_property) {
+	using Graph = matrix::Graph<NoProperty, WeightedProperty>;
+
+	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
+
+	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["6"], myGraph["5"]).weight, 0);
+	myGraph.setEdgeProperty(myGraph["6"], myGraph["5"], {1337});
+	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["6"], myGraph["5"]).weight, 1337);
+}
+
+BOOST_AUTO_TEST_CASE(matrix_graph_each_vertices) {
+	using Graph     = matrix::Graph<NoProperty, WeightedProperty>;
+	using ConstNode = matrix::Graph<NoProperty, WeightedProperty>::ConstNode_t;
+
+	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
+
+	std::string expected = "123456";
+	std::ostringstream result;
+
+	myGraph.eachVertices([&result](ConstNode node) { result << node.getName(); });
+
+	BOOST_CHECK_EQUAL(result.str(), expected);
+}
+
+BOOST_AUTO_TEST_CASE(matrix_graph_each_edges) {
+	using Graph     = matrix::Graph<NoProperty, WeightedProperty>;
+	using ConstNode = matrix::Graph<NoProperty, WeightedProperty>::ConstNode_t;
+
+	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
+
+	std::string expected = "2->1, 4->3, 6->5, ";
+	std::ostringstream result;
+
+	myGraph.eachEdges([&result](ConstNode begin, ConstNode end) {
+		result << begin.getName() << "->" << end.getName() << ", ";
+	});
+
+	BOOST_CHECK_EQUAL(result.str(), expected);
+}
+
+BOOST_AUTO_TEST_CASE(matrix_graph_each_adjacents) {
+	using Graph     = matrix::Graph<NoProperty, WeightedProperty>;
+	using ConstNode = matrix::Graph<NoProperty, WeightedProperty>::ConstNode_t;
+
+	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}, {"4", "2"}};
+
+	std::string expected = "4->2, 4->3, ";
+	std::ostringstream result;
+
+	myGraph.eachAdjacents(myGraph["4"],
+	                      [&result](ConstNode end) {
+		                      result << "4->" << end.getName() << ", ";
+		                  });
+
+	BOOST_CHECK_EQUAL(result.str(), expected);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_node_get_id) {
 	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{"0", "0"}, {"1", "1"}, {"2", "2"}, {"3", "3"}};
+
+	BOOST_CHECK_EQUAL(myGraph["0"].getId(), 0);
+	BOOST_CHECK_EQUAL(myGraph["1"].getId(), 1);
+	BOOST_CHECK_EQUAL(myGraph["2"].getId(), 2);
+	BOOST_CHECK_EQUAL(myGraph["3"].getId(), 3);
+}
+
+BOOST_AUTO_TEST_CASE(matrix_node_const_get_id) {
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
+
+	const Graph myGraph{{"0", "0"}, {"1", "1"}, {"2", "2"}, {"3", "3"}};
 
 	BOOST_CHECK_EQUAL(myGraph["0"].getId(), 0);
 	BOOST_CHECK_EQUAL(myGraph["1"].getId(), 1);

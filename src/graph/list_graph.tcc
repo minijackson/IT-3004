@@ -42,15 +42,22 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::addNode(std::string nodeName) {
+		void Graph<NodeProperty, EdgeProperty>::addNode(std::string nodeName,
+		                                                NodeProperty property) {
 			try {
 				nodeNames.at(nodeName);
 			} catch(std::out_of_range) {
 				size_t nodeId       = connections.size();
 				nodeNames[nodeName] = nodeId;
+				nodeProperties.push_back(property);
 				nameList.push_back(nodeName);
 				connections.push_back(std::list<size_t>());
 			}
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
+		void Graph<NodeProperty, EdgeProperty>::addNode(std::string nodeName) {
+			addNode(nodeName, NodeProperty());
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
@@ -118,7 +125,7 @@ namespace graph {
 			              "The function must be convertible to a function of type void(ConstNode)");
 
 			for(size_t i = 0; i < connections.size(); ++i) {
-				functor((*this)[i]);
+				functor((*this)[nameList[i]]);
 			}
 		}
 
