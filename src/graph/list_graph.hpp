@@ -60,6 +60,12 @@ namespace graph {
 			 */
 			Graph(std::initializer_list<std::pair<std::string, std::string>> edges);
 
+			/*! \brief Check if a node with the given name is in the graph.
+			 *
+			 * \param nodeName The name of the node.
+			 */
+			bool hasNode(std::string nodeName) const;
+
 			/*! \brief Add a node to the graph.
 			 *
 			 * \param node The name of the node to add.
@@ -82,6 +88,13 @@ namespace graph {
 			 * \param node The node to remove.
 			 */
 			void removeNode(ConstNode_t node);
+
+			/*! \brief Check if an edge exists between two nodes.
+			 *
+			 * \param begin The start of the edge.
+			 * \param end The end of the edge.
+			 */
+			bool hasEdge(ConstNode_t begin, ConstNode_t end) const;
 
 			/*! \brief Add an edge to the graph.
 			 *

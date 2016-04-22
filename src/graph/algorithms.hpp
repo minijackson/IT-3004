@@ -1,8 +1,6 @@
 #ifndef GRAPH_LIB_ALGORITHMS_HPP
 #define GRAPH_LIB_ALGORITHMS_HPP
 
-#include <iostream>
-
 #include <algorithm>
 #include <set>
 

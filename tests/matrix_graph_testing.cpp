@@ -203,9 +203,25 @@ BOOST_AUTO_TEST_CASE(matrix_graph_not_equal_to_operator) {
 	BOOST_CHECK(!(myGraph != myOtherOtherGraph));
 }
 
-BOOST_AUTO_TEST_CASE(matrix_graph_add_node) {
+BOOST_AUTO_TEST_CASE(matrix_graph_has_node) {
 	using Graph = matrix::Graph<WeightedProperty, NoProperty>;
 
+	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
+
+	BOOST_CHECK(myGraph.hasNode("6"));
+	BOOST_CHECK(myGraph.hasNode("5"));
+	BOOST_CHECK(myGraph.hasNode("4"));
+	BOOST_CHECK(myGraph.hasNode("3"));
+	BOOST_CHECK(myGraph.hasNode("2"));
+	BOOST_CHECK(myGraph.hasNode("1"));
+
+	BOOST_CHECK(!myGraph.hasNode("7"));
+	BOOST_CHECK(!myGraph.hasNode("42"));
+	BOOST_CHECK(!myGraph.hasNode("1337"));
+}
+
+BOOST_AUTO_TEST_CASE(matrix_graph_add_node) {
+	using Graph = matrix::Graph<WeightedProperty, NoProperty>;
 
 	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
 
@@ -219,18 +235,40 @@ BOOST_AUTO_TEST_CASE(matrix_graph_add_node) {
 
 BOOST_AUTO_TEST_CASE(matrix_graph_remove_node) {
 	using Graph = matrix::Graph<WeightedProperty, NoProperty>;
+	using ConstNode = Graph::ConstNode_t;
 
 	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
 
 	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 6);
 	myGraph.removeNode(myGraph["6"]);
 	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 5);
-	// TODO
+	BOOST_CHECK(!myGraph.hasNode("6"));
+
+	std::ostringstream result;
+	std::string expected = "2->1, 4->3, ";
+	myGraph.eachEdges([&result](ConstNode begin, ConstNode end) {
+		result << begin.getName() << "->" << end.getName() << ", ";
+	});
+
+	BOOST_CHECK_EQUAL(result.str(), expected);
+}
+
+BOOST_AUTO_TEST_CASE(matrix_graph_has_edge) {
+	using Graph = matrix::Graph<NoProperty, WeightedProperty>;
+
+	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
+
+	BOOST_CHECK(myGraph.hasEdge(myGraph["6"], myGraph["5"]));
+	BOOST_CHECK(myGraph.hasEdge(myGraph["4"], myGraph["3"]));
+	BOOST_CHECK(myGraph.hasEdge(myGraph["2"], myGraph["1"]));
+
+	BOOST_CHECK(!myGraph.hasEdge(myGraph["1"], myGraph["2"]));
+	BOOST_CHECK(!myGraph.hasEdge(myGraph["1"], myGraph["3"]));
+	BOOST_CHECK(!myGraph.hasEdge(myGraph["6"], myGraph["4"]));
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_add_edges) {
 	using Graph = matrix::Graph<NoProperty, WeightedProperty>;
-
 
 	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
 
@@ -267,7 +305,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_remove_edge) {
 	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 3);
 	myGraph.removeEdge(myGraph["4"], myGraph["3"]);
 	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 2);
-	// TODO
+	BOOST_CHECK(!myGraph.hasEdge(myGraph["4"], myGraph["3"]));
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_set_edge_property) {

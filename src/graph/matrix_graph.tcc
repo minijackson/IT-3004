@@ -44,6 +44,16 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
+		bool Graph<NodeProperty, EdgeProperty>::hasNode(std::string nodeName) const {
+			try {
+				nodeNames.at(nodeName);
+				return true;
+			} catch(std::out_of_range) {
+				return false;
+			}
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
 		void Graph<NodeProperty, EdgeProperty>::addNode(std::string nodeName,
 		                                                NodeProperty property) {
 			try {
@@ -88,6 +98,16 @@ namespace graph {
 				nodeConnections.erase(nodeConnections.begin() + nodeId);
 			}
 
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
+		bool Graph<NodeProperty, EdgeProperty>::hasEdge(ConstNode_t begin, ConstNode_t end) const {
+			try {
+				edgeProperties.at({begin.getName(), end.getName()});
+				return true;
+			} catch(std::out_of_range) {
+				return false;
+			}
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>

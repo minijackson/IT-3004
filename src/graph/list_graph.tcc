@@ -43,6 +43,16 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
+		bool Graph<NodeProperty, EdgeProperty>::hasNode(std::string nodeName) const {
+			try {
+				nodeNames.at(nodeName);
+				return true;
+			} catch(std::out_of_range) {
+				return false;
+			}
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
 		void Graph<NodeProperty, EdgeProperty>::addNode(std::string nodeName,
 		                                                NodeProperty property) {
 			try {
@@ -67,6 +77,19 @@ namespace graph {
 			std::string nodeName = node.getName();
 			size_t nodeId        = nodeNames.at(nodeName);
 
+			connections.erase(connections.begin() + nodeId);
+			for(size_t beginId = 0; beginId < connections.size(); ++beginId) {
+				for(auto edgeEndIt = connections[beginId].begin();
+				    edgeEndIt != connections[beginId].end();
+				    ++edgeEndIt) {
+					if(*edgeEndIt == nodeId) {
+						removeEdge((*this)[nameList[beginId]], (*this)[nameList[*edgeEndIt]]);
+					} else if(*edgeEndIt > nodeId) {
+						--*edgeEndIt;
+					}
+				}
+			}
+
 			nodeNames.erase(node.getName());
 			for(auto& node : nodeNames) {
 				if(node.second > nodeId) {
@@ -75,18 +98,16 @@ namespace graph {
 			}
 
 			nameList.erase(nameList.begin() + nodeId);
+		}
 
-			connections.erase(connections.begin() + nodeId);
-			for(size_t beginId = 0; beginId < connections.size(); ++beginId) {
-				for(auto edgeEndIt = connections[beginId].begin();
-				    edgeEndIt != connections[beginId].end();
-				    ++edgeEndIt) {
-					if(*edgeEndIt == nodeId) {
-						removeEdge((*this)[nameList[beginId]], (*this)[nameList[*edgeEndIt]]);
-					}
-				}
+		template <typename NodeProperty, typename EdgeProperty>
+		bool Graph<NodeProperty, EdgeProperty>::hasEdge(ConstNode_t begin, ConstNode_t end) const {
+			try {
+				edgeProperties.at({begin.getName(), end.getName()});
+				return true;
+			} catch(std::out_of_range) {
+				return false;
 			}
-
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
@@ -190,7 +211,6 @@ namespace graph {
 			                                  std::function<void(ConstNode_t, ConstNode_t)>>::value,
 			              "The function must be convertible to a function of type void(ConstNode, "
 			              "ConstNode)");
-
 			for(size_t i = 0; i < connections.size(); ++i) {
 				for(auto j : connections[i]) {
 					functor((*this)[nameList[i]], (*this)[nameList[j]]);
