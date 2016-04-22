@@ -212,7 +212,6 @@ BOOST_AUTO_TEST_CASE(list_graph_not_equal_to_operator) {
 BOOST_AUTO_TEST_CASE(list_graph_add_node) {
 	using Graph = list::Graph<WeightedProperty, NoProperty>;
 
-
 	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
 
 	myGraph.addNode("Hello");
@@ -223,9 +222,19 @@ BOOST_AUTO_TEST_CASE(list_graph_add_node) {
 	BOOST_CHECK_EQUAL(myGraph["World"].getProperty().weight, 5);
 }
 
+BOOST_AUTO_TEST_CASE(list_graph_remove_node) {
+	using Graph = list::Graph<WeightedProperty, NoProperty>;
+
+	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
+
+	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 6);
+	myGraph.removeNode(myGraph["6"]);
+	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 5);
+	// TODO
+}
+
 BOOST_AUTO_TEST_CASE(list_graph_add_edges) {
 	using Graph = list::Graph<NoProperty, WeightedProperty>;
-
 
 	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
 
@@ -252,6 +261,17 @@ BOOST_AUTO_TEST_CASE(list_graph_connect) {
 	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 5);
 	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 6);
 	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["5"], myGraph["4"]).weight, 42);
+}
+
+BOOST_AUTO_TEST_CASE(list_graph_remove_edge) {
+	using Graph = list::Graph<NoProperty, WeightedProperty>;
+
+	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
+
+	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 3);
+	myGraph.removeEdge(myGraph["4"], myGraph["3"]);
+	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 2);
+	// TODO
 }
 
 BOOST_AUTO_TEST_CASE(list_graph_set_edge_property) {

@@ -4,6 +4,7 @@
 #include "list_graph.hpp"
 
 #include <functional>
+#include <sstream>
 #include <type_traits>
 
 namespace graph {
@@ -61,6 +62,34 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
+		void Graph<NodeProperty, EdgeProperty>::removeNode(ConstNode_t node) {
+
+			std::string nodeName = node.getName();
+			size_t nodeId        = nodeNames.at(nodeName);
+
+			nodeNames.erase(node.getName());
+			for(auto& node : nodeNames) {
+				if(node.second > nodeId) {
+					--node.second;
+				}
+			}
+
+			nameList.erase(nameList.begin() + nodeId);
+
+			connections.erase(connections.begin() + nodeId);
+			for(size_t beginId = 0; beginId < connections.size(); ++beginId) {
+				for(auto edgeEndIt = connections[beginId].begin();
+				    edgeEndIt != connections[beginId].end();
+				    ++edgeEndIt) {
+					if(*edgeEndIt == nodeId) {
+						removeEdge((*this)[nameList[beginId]], (*this)[nameList[*edgeEndIt]]);
+					}
+				}
+			}
+
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
 		void Graph<NodeProperty, EdgeProperty>::addEdges(
 		        std::pair<std::string, std::string> const& edge) {
 			size_t beginId = getId(edge.first), endId = getId(edge.second);
@@ -69,8 +98,8 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::connect(ConstNode_t const& begin,
-		                                                ConstNode_t const& end,
+		void Graph<NodeProperty, EdgeProperty>::connect(ConstNode_t begin,
+		                                                ConstNode_t end,
 		                                                EdgeProperty property) {
 			size_t beginId = begin.getId(), endId = end.getId();
 			connections[beginId].push_back(endId);
@@ -78,23 +107,48 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::connect(ConstNode_t const& begin,
-		                                                ConstNode_t const& end) {
+		void Graph<NodeProperty, EdgeProperty>::connect(ConstNode_t begin,
+		                                                ConstNode_t end) {
 			connect(begin, end, EdgeProperty());
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
+		void Graph<NodeProperty, EdgeProperty>::removeEdge(ConstNode_t begin,
+		                                                   ConstNode_t end) {
+			size_t beginId = begin.getId(), endId = end.getId();
+			auto& nodeConnections = connections[beginId];
+			bool found = false;
+			for(auto adjacentIt = nodeConnections.begin(); adjacentIt != nodeConnections.end();
+			    ++adjacentIt) {
+				if(*adjacentIt == endId) {
+					found = true;
+					nodeConnections.erase(adjacentIt);
+					break;
+				}
+			}
+
+			if(!found) {
+				std::ostringstream errMsg;
+				errMsg << "No such edge if the graph: (" << begin.getName() << ", " << end.getName()
+				       << "), with id: (" << begin.getId() << ", " << end.getId() << ").";
+				throw std::out_of_range(errMsg.str());
+			}
+
+			edgeProperties.erase({begin.getName(), end.getName()});
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
 		EdgeProperty Graph<NodeProperty, EdgeProperty>::getEdgeProperty(
-		        ConstNode_t const& begin,
-		        ConstNode_t const& end) const {
+		        ConstNode_t begin,
+		        ConstNode_t end) const {
 			// Use .at() instead of operator[] because the method .at() throw if the key does not
 			// exists, instead of inserting a new key, allowing "getEdgeProperty" to be const.
 			return edgeProperties.at({begin.getName(), end.getName()});
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::setEdgeProperty(ConstNode_t const& begin,
-		                                                        ConstNode_t const& end,
+		void Graph<NodeProperty, EdgeProperty>::setEdgeProperty(ConstNode_t begin,
+		                                                        ConstNode_t end,
 		                                                        EdgeProperty property) {
 			edgeProperties.at({begin.getName(), end.getName()}) = std::move(property);
 		}

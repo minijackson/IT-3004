@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <sstream>
 #include <type_traits>
 
 namespace graph {
@@ -64,6 +65,32 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
+		void Graph<NodeProperty, EdgeProperty>::removeNode(ConstNode_t node) {
+
+			std::string nodeName = node.getName();
+			size_t nodeId        = nodeNames.at(nodeName);
+
+			nodeNames.erase(node.getName());
+			for(auto& node : nodeNames) {
+				if(node.second > nodeId) {
+					--node.second;
+				}
+			}
+
+			connections.erase(connections.begin() + nodeId);
+			this->eachEdges([this, nodeId] (ConstNode_t begin, ConstNode_t end) {
+				if(end.getId() == nodeId) {
+					removeEdge((*this)[begin.getName()], (*this)[end.getName()]);
+				}
+			});
+
+			for(auto& nodeConnections : connections) {
+				nodeConnections.erase(nodeConnections.begin() + nodeId);
+			}
+
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
 		void Graph<NodeProperty, EdgeProperty>::addEdges(
 		        std::pair<std::string, std::string> const& edge) {
 			size_t beginId = getId(edge.first), endId = getId(edge.second);
@@ -72,8 +99,8 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::connect(ConstNode_t const& begin,
-		                                                ConstNode_t const& end,
+		void Graph<NodeProperty, EdgeProperty>::connect(ConstNode_t begin,
+		                                                ConstNode_t end,
 		                                                EdgeProperty property) {
 			size_t beginId = begin.getId(), endId = end.getId();
 			connections[beginId][endId] = true;
@@ -81,23 +108,40 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::connect(ConstNode_t const& begin,
-		                                                ConstNode_t const& end) {
+		void Graph<NodeProperty, EdgeProperty>::connect(ConstNode_t begin,
+		                                                ConstNode_t end) {
 			connect(begin, end, EdgeProperty());
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
+		void Graph<NodeProperty, EdgeProperty>::removeEdge(ConstNode_t begin,
+		                                                   ConstNode_t end) {
+			size_t beginId = begin.getId(), endId = end.getId();
+
+			if(!connections[beginId][endId]) {
+				std::ostringstream errMsg;
+				errMsg << "No such edge if the graph: (" << begin.getName() << ", " << end.getName()
+				       << "), with id: (" << begin.getId() << ", " << end.getId() << ").";
+				throw std::out_of_range(errMsg.str());
+			}
+
+			connections[beginId][endId] = false;
+
+			edgeProperties.erase({begin.getName(), end.getName()});
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
 		EdgeProperty Graph<NodeProperty, EdgeProperty>::getEdgeProperty(
-		        ConstNode_t const& begin,
-		        ConstNode_t const& end) const {
+		        ConstNode_t begin,
+		        ConstNode_t end) const {
 			// Use .at() instead of operator[] because the method .at() throw if the key does not
 			// exists, instead of inserting a new key, allowing "getEdgeProperty" to be const.
 			return edgeProperties.at({begin.getName(), end.getName()});
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::setEdgeProperty(ConstNode_t const& begin,
-		                                                        ConstNode_t const& end,
+		void Graph<NodeProperty, EdgeProperty>::setEdgeProperty(ConstNode_t begin,
+		                                                        ConstNode_t end,
 		                                                        EdgeProperty property) {
 			edgeProperties.at({begin.getName(), end.getName()}) = std::move(property);
 		}

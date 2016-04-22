@@ -71,6 +71,17 @@ namespace graph {
 			 */
 			void addNode(std::string nodeName);
 
+			/*! \brief Remove a node from the graph.
+			 *
+			 * \warning This will invalidate every ConstNode or Node object from the graph that have
+			 *          an id greater than the node to be removed.
+			 *
+			 * \exception std::out_of_range If the node is not in the graph.
+			 *
+			 * \param node The node to remove.
+			 */
+			void removeNode(ConstNode_t node);
+
 			/*! \brief Add an edge to the graph.
 			 *
 			 * \param edge A pair whose first element is the starting vertex, and the second
@@ -93,21 +104,30 @@ namespace graph {
 			 * \param end The Node at the end of the edge.
 			 * \param property The property to assign to the edge.
 			 */
-			void connect(ConstNode_t const& begin, ConstNode_t const& end, EdgeProperty property);
+			void connect(ConstNode_t begin, ConstNode_t end, EdgeProperty property);
 
 			/*! \brief Connect two nodes in the graph
 			 *
 			 * \param begin The Node at the start of the edge
 			 * \param end The Node at the end of the edge
 			 */
-			void connect(ConstNode_t const& begin, ConstNode_t const& end);
+			void connect(ConstNode_t begin, ConstNode_t end);
+
+			/*! \brief Remove an edge from the graph.
+			 *
+			 * \exception std::out_of_range If the edge is not in the graph.
+			 *
+			 * \param begin The start of the edge.
+			 * \param end The end of the arc.
+			 */
+			void removeEdge(ConstNode_t begin, ConstNode_t end);
 
 			/*! \brief Get the property of a given edge.
 			 *
 			 * \param begin The node at the start of the edge.
 			 * \param end The node at the end of the edge.
 			 */
-			EdgeProperty getEdgeProperty(ConstNode_t const& begin, ConstNode_t const& end) const;
+			EdgeProperty getEdgeProperty(ConstNode_t begin, ConstNode_t end) const;
 
 			/*! \brief Set the property of the given edge.
 			 *
@@ -115,8 +135,8 @@ namespace graph {
 			 * \param end The node at the end of the edge.
 			 * \param property The property to set.
 			 */
-			void setEdgeProperty(ConstNode_t const& begin,
-			                     ConstNode_t const& end,
+			void setEdgeProperty(ConstNode_t begin,
+			                     ConstNode_t end,
 			                     EdgeProperty property);
 
 			/*! \brief Get the matrix of connections for this graph.
