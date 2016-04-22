@@ -78,12 +78,14 @@ namespace graph {
 			size_t nodeId        = nodeNames.at(nodeName);
 
 			connections.erase(connections.begin() + nodeId);
+
 			for(size_t beginId = 0; beginId < connections.size(); ++beginId) {
 				for(auto edgeEndIt = connections[beginId].begin();
 				    edgeEndIt != connections[beginId].end();
 				    ++edgeEndIt) {
 					if(*edgeEndIt == nodeId) {
-						removeEdge((*this)[nameList[beginId]], (*this)[nameList[*edgeEndIt]]);
+						edgeEndIt = connections[beginId].erase(edgeEndIt);
+						edgeProperties.erase({nameList[beginId], nameList[*edgeEndIt]});
 					} else if(*edgeEndIt > nodeId) {
 						--*edgeEndIt;
 					}

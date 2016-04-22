@@ -280,8 +280,6 @@ namespace graph {
 				}
 			loop_end:
 				return !failure;
-				return connections == other.connections && nodeProperties == other.nodeProperties &&
-				       edgeProperties == other.edgeProperties;
 			} catch(std::out_of_range) {
 				return false;
 			}

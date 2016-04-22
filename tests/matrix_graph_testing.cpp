@@ -185,22 +185,30 @@ BOOST_AUTO_TEST_CASE(matrix_graph_equal_to_operator) {
 	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}},
-		    myOtherGraph{{"4", "3"}, {"6", "5"}, {"2", "1"}},
-		    myOtherOtherGraph{{"4", "3"}, {"6", "5"}, {"2", "0"}};
+		    sameGraph{{"4", "3"}, {"6", "5"}, {"2", "1"}},
+		    differentEdges{{"4", "3"}, {"6", "1"}, {"2", "5"}},
+		    differentNodeCount{{"5", "3"}, {"6", "5"}, {"2", "0"}},
+		    differentNodeNames{{"a", "b"}, {"c", "d"}, {"e", "f"}};
 
-	BOOST_CHECK(myGraph == myOtherGraph);
-	BOOST_CHECK(!(myGraph == myOtherOtherGraph));
+	BOOST_CHECK(myGraph == sameGraph);
+	BOOST_CHECK(!(myGraph == differentEdges));
+	BOOST_CHECK(!(myGraph == differentNodeCount));
+	BOOST_CHECK(!(myGraph == differentNodeNames));
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_not_equal_to_operator) {
 	using Graph = matrix::Graph<NoProperty, NoProperty>;
 
 	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}},
-		    myOtherGraph{{"7", "6"}, {"4", "3"}, {"2", "1"}},
-			myOtherOtherGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
+		    sameGraph{{"4", "3"}, {"6", "5"}, {"2", "1"}},
+		    differentEdges{{"4", "3"}, {"6", "1"}, {"2", "5"}},
+		    differentNodeCount{{"5", "3"}, {"6", "5"}, {"2", "0"}},
+		    differentNodeNames{{"a", "b"}, {"c", "d"}, {"e", "f"}};
 
-	BOOST_CHECK(myGraph != myOtherGraph);
-	BOOST_CHECK(!(myGraph != myOtherOtherGraph));
+	BOOST_CHECK(!(myGraph != sameGraph));
+	BOOST_CHECK(myGraph != differentEdges);
+	BOOST_CHECK(myGraph != differentNodeCount);
+	BOOST_CHECK(myGraph != differentNodeNames);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_has_node) {
@@ -237,7 +245,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_remove_node) {
 	using Graph = matrix::Graph<WeightedProperty, NoProperty>;
 	using ConstNode = Graph::ConstNode_t;
 
-	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
+	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}, {"5", "6"}};
 
 	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 6);
 	myGraph.removeNode(myGraph["6"]);
@@ -306,6 +314,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_remove_edge) {
 	myGraph.removeEdge(myGraph["4"], myGraph["3"]);
 	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 2);
 	BOOST_CHECK(!myGraph.hasEdge(myGraph["4"], myGraph["3"]));
+	BOOST_CHECK_THROW(myGraph.removeEdge(myGraph["5"], myGraph["4"]), std::out_of_range);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_set_edge_property) {
