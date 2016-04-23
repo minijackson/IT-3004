@@ -247,6 +247,16 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
+		auto Graph<NodeProperty, EdgeProperty>::begin() -> Node_t {
+			return (*this)[nameList[0]];
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
+		auto Graph<NodeProperty, EdgeProperty>::begin() const -> ConstNode_t {
+			return (*this)[nameList[0]];
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
 		auto Graph<NodeProperty, EdgeProperty>::operator[](std::string nodeName) -> Node_t {
 			size_t nodeId = getId(nodeName);
 			return Node_t(nodeId, connections[nodeId], nodeName, nodeProperties[nodeId]);

@@ -130,6 +130,36 @@ BOOST_AUTO_TEST_CASE(matrix_graph_subscript_operator) {
 	BOOST_CHECK(myGraph.getConnections()[0] == firstNode.getConnections());
 }
 
+BOOST_AUTO_TEST_CASE(matrix_graph_const_subscript_operator) {
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
+	using Node = Graph::ConstNode_t;
+
+	const Graph myGraph{{"1", "2"}, {"3", "4"}, {"5", "6"}};
+	Node firstNode = myGraph["1"];
+
+	BOOST_CHECK(myGraph.getConnections()[0] == firstNode.getConnections());
+}
+
+BOOST_AUTO_TEST_CASE(matrix_graph_begin) {
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
+	using Node = Graph::Node_t;
+
+	Graph myGraph{{"1", "2"}, {"3", "4"}, {"5", "6"}};
+	Node firstNode = myGraph["1"];
+
+	BOOST_CHECK(myGraph.begin() == firstNode);
+}
+
+BOOST_AUTO_TEST_CASE(matrix_graph_const_begin) {
+	using Graph = matrix::Graph<NoProperty, NoProperty>;
+	using Node = Graph::ConstNode_t;
+
+	const Graph myGraph{{"1", "2"}, {"3", "4"}, {"5", "6"}};
+	Node firstNode = myGraph["1"];
+
+	BOOST_CHECK(myGraph.begin() == firstNode);
+}
+
 BOOST_AUTO_TEST_CASE(matrix_graph_equal_to_operator) {
 	using Graph = matrix::Graph<NoProperty, NoProperty>;
 

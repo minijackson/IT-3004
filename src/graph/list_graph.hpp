@@ -213,6 +213,18 @@ namespace graph {
 			 */
 			size_t getId(std::string name) const;
 
+			/*! \brief Get the first node of the graph.
+			 *
+			 * \return The first node in the graph.
+			 */
+			Node_t begin();
+
+			/*! \brief Get the first node of the graph.
+			 *
+			 * \return The first node in the graph.
+			 */
+			ConstNode_t begin() const;
+
 			/*! \brief Return a Node representing a node from this graph with a given name.
 			 *
 			 * \param nodeId The name of the node.
