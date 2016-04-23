@@ -84,8 +84,8 @@ namespace graph {
 				auto edgeEndIt = connections[beginId].begin();
 				while(edgeEndIt != connections[beginId].end()) {
 					if(*edgeEndIt == nodeId) {
-						edgeEndIt = connections[beginId].erase(edgeEndIt);
 						edgeProperties.erase({nameList[beginId], nameList[*edgeEndIt]});
+						edgeEndIt = connections[beginId].erase(edgeEndIt);
 						continue;
 					} else if(*edgeEndIt > nodeId) {
 						--*edgeEndIt;
