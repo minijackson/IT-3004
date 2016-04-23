@@ -10,11 +10,11 @@ namespace graph {
 
 	/*! \brief Return the symmetric graph of the current graph.
 	 *
-	 * \param graph The Graph from which to create the symmetric graph.
-	 * \return the symmetric graph of the current graph.
+	 * \param g The Graph from which to create the symmetric graph.
+	 * \return The symmetric graph of the current graph.
 	 */
 	template <typename Graph>
-	std::decay_t<Graph> symmetric(Graph const& g) {
+	Graph symmetric(Graph const& g) {
 		std::decay_t<Graph> symmetricGraph;
 		using ConstNode = typename Graph::ConstNode_t;
 
@@ -27,6 +27,24 @@ namespace graph {
 		});
 
 		return symmetricGraph;
+	}
+
+	/*! \brief Compute the undirected graph equivalent of a given directed graph.
+	 *
+	 * \param g The Graph from which we want the undirected graph equivalent.
+	 * \return The undirected graph equivalent.
+	 */
+	template <typename Graph>
+	Graph undirected(Graph g) {
+		using ConstNode = typename Graph::ConstNode_t;
+
+		Graph symm = symmetric(g);
+
+		symm.eachEdges([&g, &symm](ConstNode begin, ConstNode end) {
+			g.connect(g[begin.getName()], g[end.getName()], symm.getEdgeProperty(begin, end));
+		});
+
+		return g;
 	}
 
 	/*! \brief Get the strongly connected component of a given vertex.
@@ -92,7 +110,7 @@ namespace graph {
 	 *
 	 * \param g The graph from which we want the connected component.
 	 * \param vertex The vertex from which to compute the connected component.
-	 * \return the set of vertices which compose the connected component.
+	 * \return The set of vertices which compose the connected component.
 	 */
 	template <typename Graph>
 	std::set<typename Graph::ConstNode_t> connectedComponent(Graph const& g,
@@ -133,6 +151,58 @@ namespace graph {
 		}
 
 		return nodeComponent;
+	}
+
+	/*! \brief Get the minimum spanning tree of a given graph.
+	 *
+	 * This implementation uses the Prim algorithm.
+	 *
+	 * \param g The graph from which we want the minimum spanning tree. The graph must be an
+	 *          undirected graph or the result will be garbage.
+	 * \param vertex The vertex from which to compute the minimum spanning tree.
+	 * \return The minimum spanning tree of the graph.
+	 */
+	template <typename Graph>
+	Graph minimumSpanningTree(Graph const& g, typename Graph::ConstNode_t vertex) {
+		using ConstNode   = typename Graph::ConstNode_t;
+
+		auto compareEdges([&g](std::pair<ConstNode, ConstNode> left,
+		                       std::pair<ConstNode, ConstNode> right) mutable {
+			return g.getEdgeProperty(left.first, left.second).weight <
+			       g.getEdgeProperty(right.first, right.second).weight;
+		});
+
+		std::set<std::pair<ConstNode, ConstNode>, decltype(compareEdges)> sortedEdgesToCheck(
+		        compareEdges);
+		std::set<ConstNode> checkedNodes{vertex};
+		std::set<std::pair<ConstNode, ConstNode>> mstEdgeSet;
+
+		g.eachAdjacents(vertex, [&g, &sortedEdgesToCheck, &vertex](ConstNode end) {
+			sortedEdgesToCheck.insert({vertex, end});
+		});
+
+		while(sortedEdgesToCheck.size() != 0) {
+			auto const& currentEdge = *sortedEdgesToCheck.begin();
+			if(checkedNodes.count(currentEdge.second) == 0) {
+				mstEdgeSet.insert(currentEdge);
+
+				g.eachAdjacents(currentEdge.second,
+				                  [&sortedEdgesToCheck, begin = currentEdge.second ](ConstNode end){
+								  	sortedEdgesToCheck.insert({begin, end});
+				                  });
+				checkedNodes.insert(currentEdge.second);
+			}
+
+			sortedEdgesToCheck.erase(sortedEdgesToCheck.begin());
+		}
+
+		Graph mst;
+		for(auto const& edge : mstEdgeSet) {
+			mst.addEdges({edge.first.getName(), edge.second.getName()});
+			mst.setEdgeProperty(
+			        edge.first, edge.second, g.getEdgeProperty(edge.first, edge.second));
+		}
+		return undirected(mst);
 	}
 }
 

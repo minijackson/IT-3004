@@ -14,6 +14,14 @@ list_graph_testing = executable('list_graph_testing',
                                 link_with: libgraph,
                                 dependencies: boost_testing_dep)
 
+algorithms_testing = executable('algorithms_testing',
+                                'algorithms_testing.cpp',
+                                include_directories: graph_inc,
+                                link_with: libgraph,
+                                dependencies: boost_testing_dep)
+
+test('Algorithms testing', algorithms_testing, args: ['-l', 'test_suite'])
+
 test('List Graph testing', list_graph_testing, args: ['-l', 'test_suite'])
 
 graphviz = executable('graphviz',

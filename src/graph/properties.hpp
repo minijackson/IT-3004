@@ -4,11 +4,19 @@
 namespace graph {
 		struct WeightedProperty {
 			int weight;
+
+		    bool operator==(WeightedProperty other) const {
+			    return weight == other.weight;
+		    }
 		};
 
 		struct AstarNodeProperty {
 			int gScore;
 			int fScore;
+
+		    bool operator==(AstarNodeProperty other) const {
+			    return (gScore == other.fScore) && (fScore == other.fScore);
+		    }
 		};
 
 	    struct NoProperty {

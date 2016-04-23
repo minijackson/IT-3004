@@ -276,21 +276,7 @@ namespace graph {
 				return false;
 			}
 
-			std::set<std::pair<std::string, std::string>> thisEdges, otherEdges;
-
-			for(const auto& begin : nodeNames) {
-				for(const auto& end : connections[begin.second]) {
-					thisEdges.insert({begin.first, nameList[end]});
-				}
-			}
-
-			for(const auto& begin : other.nodeNames) {
-				for(const auto& end : other.connections[begin.second]) {
-					otherEdges.insert({begin.first, other.nameList[end]});
-				}
-			}
-
-			return thisEdges == otherEdges;
+			return edgeProperties == other.edgeProperties;
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>

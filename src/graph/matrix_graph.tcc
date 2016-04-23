@@ -261,28 +261,20 @@ namespace graph {
 		bool Graph<NodeProperty, EdgeProperty>::operator==(
 		        Graph<OtherNodeProperty, OtherEdgeProperty> const& other) const {
 
-			if(nodeNames.size() != other.nodeNames.size()) {
+			
+			// Compare node names and number of nodes
+			if(!std::equal(nodeNames.begin(),
+			               nodeNames.end(),
+			               other.nodeNames.begin(),
+			               other.nodeNames.end(),
+			               [](std::pair<std::string, size_t> const& a,
+			                  std::pair<std::string, size_t> const& b) {
+				               return a.first == b.first;
+				           })) {
 				return false;
 			}
 
-			try {
-				bool failure = false;
-				for(const auto& begin : nodeNames) {
-					for(const auto& end : nodeNames) {
-						size_t otherBeginId = other.nodeNames.at(begin.first),
-						       otherEndId = other.nodeNames.at(end.first);
-						if(connections[begin.second][end.second] !=
-						   other.connections[otherBeginId][otherEndId]) {
-							failure = true;
-							goto loop_end;
-						}
-					}
-				}
-			loop_end:
-				return !failure;
-			} catch(std::out_of_range) {
-				return false;
-			}
+			return edgeProperties == other.edgeProperties;
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
