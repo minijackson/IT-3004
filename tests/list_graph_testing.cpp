@@ -230,15 +230,15 @@ BOOST_AUTO_TEST_CASE(list_graph_remove_node) {
 	using Graph = list::Graph<WeightedProperty, NoProperty>;
 	using ConstNode = Graph::ConstNode_t;
 
-	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}, {"5", "6"}};
+	Graph myGraph{{"6", "5"}, {"4", "3"}, {"4", "2"}, {"2", "1"}, {"3", "4"}};
 
 	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 6);
-	myGraph.removeNode(myGraph["6"]);
+	myGraph.removeNode(myGraph["3"]);
 	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 5);
-	BOOST_CHECK(!myGraph.hasNode("6"));
+	BOOST_CHECK(!myGraph.hasNode("3"));
 
 	std::ostringstream result;
-	std::string expected = "4->3, 2->1, ";
+	std::string expected = "6->5, 4->2, 2->1, ";
 	myGraph.eachEdges([&result](ConstNode begin, ConstNode end) {
 		result << begin.getName() << "->" << end.getName() << ", ";
 	});

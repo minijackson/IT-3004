@@ -80,15 +80,18 @@ namespace graph {
 			connections.erase(connections.begin() + nodeId);
 
 			for(size_t beginId = 0; beginId < connections.size(); ++beginId) {
-				for(auto edgeEndIt = connections[beginId].begin();
-				    edgeEndIt != connections[beginId].end();
-				    ++edgeEndIt) {
+
+				auto edgeEndIt = connections[beginId].begin();
+				while(edgeEndIt != connections[beginId].end()) {
 					if(*edgeEndIt == nodeId) {
 						edgeEndIt = connections[beginId].erase(edgeEndIt);
 						edgeProperties.erase({nameList[beginId], nameList[*edgeEndIt]});
+						continue;
 					} else if(*edgeEndIt > nodeId) {
 						--*edgeEndIt;
 					}
+
+					++edgeEndIt;
 				}
 			}
 
