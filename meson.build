@@ -6,6 +6,8 @@ subdir('./tests')
 
 celero_dep = dependency('celero', fallback: ['celero', 'celero_dep'])
 
-graph_dep = declare_dependency(include_directories: graph_inc, link_with: libgraph)
+graph_dep_inc = include_directories('./src/')
+
+graph_dep = declare_dependency(include_directories: graph_dep_inc, link_with: libgraph)
 
 # vim: ft=cmake
