@@ -279,7 +279,8 @@ namespace graph {
 			std::vector<std::string> nameList;
 		};
 
-		using AstarGraph    = Graph<AstarNodeProperty, WeightedProperty>;
+		template <typename State>
+		using AstarGraph    = Graph<AstarNodeProperty<State>, WeightedProperty>;
 		using WeightedGraph = Graph<void, WeightedProperty>;
 	}
 }

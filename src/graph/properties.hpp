@@ -12,7 +12,23 @@ namespace graph {
 		    }
 		};
 
+		template <typename State>
 		struct AstarNodeProperty {
+			int gScore;
+			int hScore;
+
+			std::string parent;
+
+			State state;
+
+		    bool operator==(AstarNodeProperty other) const {
+			    return (gScore == other.gScore) && (hScore == other.hScore) &&
+			           (parent == other.parent) && (state == other.state);
+		    }
+		};
+
+		template <>
+		struct AstarNodeProperty<void> {
 			int gScore;
 			int hScore;
 

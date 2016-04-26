@@ -5,7 +5,8 @@ namespace graph {
 
 		template class Graph<NoProperty, NoProperty>;
 		template class Graph<NoProperty, WeightedProperty>;
-		template class Graph<AstarNodeProperty, WeightedProperty>;
+		template class Graph<AstarNodeProperty<void>, WeightedProperty>;
+		template class Graph<AstarNodeProperty<std::string>, WeightedProperty>;
 
 	}
 }
