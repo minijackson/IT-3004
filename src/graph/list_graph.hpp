@@ -281,7 +281,7 @@ namespace graph {
 
 		template <typename State>
 		using AstarGraph    = Graph<AstarNodeProperty<State>, WeightedProperty>;
-		using WeightedGraph = Graph<void, WeightedProperty>;
+		using WeightedGraph = Graph<NoProperty, WeightedProperty>;
 	}
 }
 
