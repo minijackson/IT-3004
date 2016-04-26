@@ -1,6 +1,8 @@
 #ifndef GRAPH_LIB_PROPERTIES_HPP
 #define GRAPH_LIB_PROPERTIES_HPP
 
+#include <string>
+
 namespace graph {
 		struct WeightedProperty {
 			int weight;
@@ -12,10 +14,13 @@ namespace graph {
 
 		struct AstarNodeProperty {
 			int gScore;
-			int fScore;
+			int hScore;
+
+			std::string parent;
 
 		    bool operator==(AstarNodeProperty other) const {
-			    return (gScore == other.fScore) && (fScore == other.fScore);
+			    return (gScore == other.gScore) && (hScore == other.hScore) &&
+			           (parent == other.parent);
 		    }
 		};
 
