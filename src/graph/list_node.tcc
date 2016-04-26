@@ -91,6 +91,11 @@ namespace graph {
 		}
 
 		template <typename NodeProperty>
+		void Node<NodeProperty>::setProperty(NodeProperty property) {
+			this->property = property;
+		}
+
+		template <typename NodeProperty>
 		ConstNode<NodeProperty>::ConstNode(size_t id,
 		                                   std::list<size_t> const& connections,
 		                                   std::string name,

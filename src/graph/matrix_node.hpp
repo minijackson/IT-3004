@@ -132,6 +132,10 @@ namespace graph {
 			 */
 			NodeProperty& getProperty();
 
+			/*! \brief Set the property of the current Node.
+			 */
+			void setProperty(NodeProperty property);
+
 			friend ConstNode<NodeProperty>;
 		};
 
