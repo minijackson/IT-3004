@@ -15,19 +15,20 @@ namespace graph {
 		 * Therefore, like an iterator, using this object after the destruction of the parent Graph
 		 * will result in a dandling reference.
 		 */
-		template <typename NodeProperty, typename Connections>
+		template <typename NodePropertyVector, typename Connections>
 		class GenericNode {
+			using NodeProperty = typename std::decay_t<NodePropertyVector>::value_type;
 		public:
-			friend class GenericNode<NodeProperty, std::vector<bool>&>;
-			friend class GenericNode<NodeProperty, std::vector<bool> const&>;
+			friend class GenericNode<NodePropertyVector, std::vector<bool>&>;
+			friend class GenericNode<NodePropertyVector, std::vector<bool> const&>;
 
 			GenericNode() = delete;
 
-			template <typename OtherNodeProperty, typename OtherConnections>
-			GenericNode(GenericNode<OtherNodeProperty, OtherConnections>& other);
+			template <typename OtherNodePropertyVector, typename OtherConnections>
+			GenericNode(GenericNode<OtherNodePropertyVector, OtherConnections>& other);
 
-			template <typename OtherNodeProperty, typename OtherConnections>
-			GenericNode(GenericNode<OtherNodeProperty, OtherConnections>&& other);
+			template <typename OtherNodePropertyVector, typename OtherConnections>
+			GenericNode(GenericNode<OtherNodePropertyVector, OtherConnections>&& other);
 
 			/*! \brief Node default constructor.
 			 *
@@ -38,7 +39,7 @@ namespace graph {
 			GenericNode(size_t id,
 			            ParentConnections& connections,
 			            std::string name,
-			            NodeProperty& property);
+			            NodePropertyVector& property);
 
 			/*! \brief Return true if two nodes are the same node (by name).
 			 *
@@ -63,7 +64,7 @@ namespace graph {
 			 * \param otherId the other node to check.
 			 * \return true if the current node is connected to the given node.
 			 */
-			bool isConnectedTo(GenericNode<NodeProperty, Connections> const& other) const;
+			bool isConnectedTo(GenericNode<NodePropertyVector, Connections> const& other) const;
 
 			/*! \brief Get the id of the current node.
 			 *
@@ -87,7 +88,7 @@ namespace graph {
 			 *
 			 * \return The current node's property.
 			 */
-			NodeProperty getProperty() const;
+			NodePropertyVector getProperty() const;
 
 		protected:
 			/*! \brief The name of the node to reference.
@@ -104,15 +105,15 @@ namespace graph {
 
 			/*! \brief The property of the current node.
 			 */
-			NodeProperty property;
+			NodePropertyVector property;
 		};
 
 		template <typename NodeProperty>
 		class ConstNode;
 
 		template <typename NodeProperty>
-		class Node : public GenericNode<NodeProperty&, std::vector<bool>&> {
-			using ParentClass = GenericNode<NodeProperty&, std::vector<bool>&>;
+		class Node : public GenericNode<std::vector<NodeProperty>&, std::vector<bool>&> {
+			using ParentClass = GenericNode<std::vector<NodeProperty>&, std::vector<bool>&>;
 		public:
 			/*! \brief Node default constructor.
 			 *
@@ -124,7 +125,7 @@ namespace graph {
 			Node(size_t id,
 			     std::vector<bool>& connections,
 			     std::string name,
-			     NodeProperty& property);
+			     std::vector<NodeProperty>& property);
 
 			/*! \brief Return the property of the current Node.
 			 *
@@ -140,8 +141,11 @@ namespace graph {
 		};
 
 		template <typename NodeProperty>
-		class ConstNode : public GenericNode<NodeProperty const&, std::vector<bool> const&> {
-			using ParentClass = GenericNode<NodeProperty const&, std::vector<bool> const&>;
+		class ConstNode
+		        : public GenericNode<std::vector<NodeProperty> const&, std::vector<bool> const&> {
+			using ParentClass =
+			        GenericNode<std::vector<NodeProperty> const&, std::vector<bool> const&>;
+
 		public:
 			/*! \brief Node default constructor.
 			 *
@@ -153,7 +157,7 @@ namespace graph {
 			ConstNode(size_t id,
 			          std::vector<bool> const& connections,
 			          std::string name,
-			          NodeProperty const& property);
+			          std::vector<NodeProperty> const& property);
 
 			/*! \brief Convert a Node to a ConstNode.
 			 *

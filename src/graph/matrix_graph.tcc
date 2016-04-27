@@ -256,14 +256,14 @@ namespace graph {
 		template <typename NodeProperty, typename EdgeProperty>
 		auto Graph<NodeProperty, EdgeProperty>::operator[](std::string nodeName) -> Node_t {
 			size_t nodeId = getId(nodeName);
-			return Node_t(nodeId, connections[nodeId], nodeName, nodeProperties[nodeId]);
+			return Node_t(nodeId, connections[nodeId], nodeName, nodeProperties);
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
 		auto Graph<NodeProperty, EdgeProperty>::operator[](std::string nodeName) const
 		        -> ConstNode_t {
 			size_t nodeId = getId(nodeName);
-			return ConstNode_t(nodeId, connections[nodeId], nodeName, nodeProperties[nodeId]);
+			return ConstNode_t(nodeId, connections[nodeId], nodeName, nodeProperties);
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
