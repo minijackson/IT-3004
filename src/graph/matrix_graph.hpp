@@ -97,6 +97,23 @@ namespace graph {
 
 			/*! \brief Add an edge to the graph.
 			 *
+			 * \param edge A tuple whose first element is the starting vertex, the second element
+			 *             is the end vertex, and the third element is the property of the vertex.
+			 */
+			void addEdges(std::tuple<std::string, std::string, EdgeProperty> const& edge);
+
+			/*! \brief Add several edges to the graph.
+			 *
+			 * \param edge An edge with it's property.
+			 * \param edges More edges with their properties.
+			 * \sa addEdges(std::pair<std::string, std::string>)
+			 */
+			template <typename... Edges>
+			inline void addEdges(std::tuple<std::string, std::string, EdgeProperty> const& edge,
+			                     Edges... edges);
+
+			/*! \brief Add an edge to the graph.
+			 *
 			 * \param edge A pair whose first element is the starting vertex, and the second
 			 *        element is the end vertex.
 			 */

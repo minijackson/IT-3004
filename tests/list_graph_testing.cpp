@@ -3,6 +3,7 @@
 
 #include <set>
 #include <sstream>
+#include <tuple>
 #include <vector>
 
 #define BOOST_TEST_DYN_LINK
@@ -269,10 +270,10 @@ BOOST_AUTO_TEST_CASE(list_graph_add_edges) {
 	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 4);
 	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 8);
 	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["Hello"], myGraph["World"]).weight, 0);
-	myGraph.addEdges({"World", "Hello"});
+	myGraph.addEdges(std::make_tuple("World", "Hello", WeightedProperty{5}));
 	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 5);
 	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 8);
-	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["World"], myGraph["Hello"]).weight, 0);
+	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["World"], myGraph["Hello"]).weight, 5);
 }
 
 BOOST_AUTO_TEST_CASE(list_graph_connect) {

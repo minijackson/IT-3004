@@ -18,22 +18,6 @@ namespace graph {
 			addEdges(edges...);
 		}
 
-		template <typename Candidate>
-		using is_convertible_to_edge =
-		        std::is_convertible<std::pair<std::string, std::string>, Candidate>;
-
-		template <typename NodeProperty, typename EdgeProperty>
-		template <typename... Edges>
-		inline void Graph<NodeProperty, EdgeProperty>::addEdges(
-		        std::pair<std::string, std::string> const& edge,
-		        Edges... edges) {
-			static_assert(check_all_v<is_convertible_to_edge, Edges...>,
-			              "The arguments of addEdges must be convertible to "
-			              "std::pair<std::string, std::string>");
-			addEdges(edge);
-			addEdges(edges...);
-		}
-
 		template <typename NodeProperty, typename EdgeProperty>
 		Graph<NodeProperty, EdgeProperty>::Graph(
 		        std::initializer_list<std::pair<std::string, std::string>> edgeNames)
@@ -112,10 +96,35 @@ namespace graph {
 
 		template <typename NodeProperty, typename EdgeProperty>
 		void Graph<NodeProperty, EdgeProperty>::addEdges(
-		        std::pair<std::string, std::string> const& edge) {
-			size_t beginId = getId(edge.first), endId = getId(edge.second);
+		        std::tuple<std::string, std::string, EdgeProperty> const& edge) {
+			std::string start = std::get<0>(edge), end = std::get<1>(edge);
+			size_t beginId = getId(start), endId = getId(end);
 			connections[beginId][endId] = true;
-			edgeProperties[{edge.first, edge.second}] = EdgeProperty();
+			edgeProperties[{start, end}] = std::get<EdgeProperty>(edge);
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
+		template <typename... Edges>
+		inline void Graph<NodeProperty, EdgeProperty>::addEdges(
+		        std::tuple<std::string, std::string, EdgeProperty> const& edge,
+		        Edges... edges) {
+			addEdges(edge);
+			addEdges(edges...);
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
+		void Graph<NodeProperty, EdgeProperty>::addEdges(
+		        std::pair<std::string, std::string> const& edge) {
+			addEdges(std::make_tuple(edge.first, edge.second, EdgeProperty()));
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
+		template <typename... Edges>
+		inline void Graph<NodeProperty, EdgeProperty>::addEdges(
+		        std::pair<std::string, std::string> const& edge,
+		        Edges... edges) {
+			addEdges(std::make_tuple(edge.first, edge.second, EdgeProperty()));
+			addEdges(edges...);
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
@@ -271,7 +280,6 @@ namespace graph {
 		bool Graph<NodeProperty, EdgeProperty>::operator==(
 		        Graph<OtherNodeProperty, OtherEdgeProperty> const& other) const {
 
-			
 			// Compare node names and number of nodes
 			if(!std::equal(nodeNames.begin(),
 			               nodeNames.end(),
