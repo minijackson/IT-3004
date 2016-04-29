@@ -96,6 +96,13 @@ namespace graph {
 			template <typename... Edges>
 			inline void addEdges(Edge_t edge, Edges... edges);
 
+			/*! \brief Add several edges to the graph.
+			 *
+			 * \param edge Many edges.
+			 * \sa addEdges(Edge_t)
+			 */
+			inline void addEdges(std::initializer_list<Edge_t> edges);
+
 			/*! \brief Connect two nodes in the graph
 			 *
 			 * \param begin The Node at the start of the edge.

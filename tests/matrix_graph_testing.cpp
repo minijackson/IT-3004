@@ -255,6 +255,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_has_edge) {
 
 BOOST_AUTO_TEST_CASE(matrix_graph_add_edges) {
 	using Graph = matrix::Graph<NoProperty, WeightedProperty>;
+	using Edge  = Graph::Edge_t;
 
 	Graph myGraph{{"6", "5"}, {"4", "3"}, {"2", "1"}};
 
@@ -262,10 +263,23 @@ BOOST_AUTO_TEST_CASE(matrix_graph_add_edges) {
 	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 4);
 	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 8);
 	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["Hello"], myGraph["World"]).weight, 0);
+
 	myGraph.addEdges({"World", "Hello", WeightedProperty{5}});
 	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 5);
 	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 8);
 	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["World"], myGraph["Hello"]).weight, 5);
+
+	myGraph.addEdges(Edge{"Goodbye", "World", WeightedProperty{5}}, Edge{"World", "Goodbye"});
+	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 7);
+	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 9);
+	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["Goodbye"], myGraph["World"]).weight, 5);
+	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["World"], myGraph["Goodbye"]).weight, 0);
+
+	myGraph.addEdges({{"foo", "bar", {5}}, {"bar", "foo"}});
+	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 9);
+	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 11);
+	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["foo"], myGraph["bar"]).weight, 5);
+	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["bar"], myGraph["foo"]).weight, 0);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_graph_connect) {

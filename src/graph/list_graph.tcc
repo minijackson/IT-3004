@@ -114,6 +114,14 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
+		inline void Graph<NodeProperty, EdgeProperty>::addEdges(
+		        std::initializer_list<Edge_t> edges) {
+			for(auto& edge : edges) {
+				addEdges(std::move(edge));
+			}
+		}
+
+		template <typename NodeProperty, typename EdgeProperty>
 		void Graph<NodeProperty, EdgeProperty>::connect(ConstNode_t begin,
 		                                                ConstNode_t end,
 		                                                EdgeProperty property) {
