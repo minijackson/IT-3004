@@ -386,28 +386,6 @@ BOOST_AUTO_TEST_CASE(matrix_node_is_connected_to) {
 	BOOST_CHECK(myGraph["1"].isConnectedTo(myGraph["3"]));
 }
 
-BOOST_AUTO_TEST_CASE(matrix_graph_printing) {
-	using Graph = matrix::Graph<NoProperty, NoProperty>;
-
-	Graph myGraph{{"4", "5"}, {"6", "3"}, {"2", "4"}, {"5", "2"}, {"6", "4"}, {"3", "3"}};
-
-	std::string expected = "2 -> 4\n3 -> 3\n4 -> 5\n5 -> 2\n6 -> 3\n6 -> 4\n";
-	std::ostringstream result;
-
-	result << myGraph;
-	BOOST_CHECK_EQUAL(result.str(), expected);
-}
-
-BOOST_AUTO_TEST_CASE(matrix_graph_graphviz) {
-	using Graph = matrix::Graph<NoProperty, NoProperty>;
-
-	Graph myGraph{{"4", "5"}, {"6", "3"}, {"2", "4"}, {"5", "2"}, {"6", "4"}, {"3", "3"}};
-
-	std::string expected = "digraph myGraph {\n2 -> 4\n3 -> 3\n4 -> 5\n5 -> 2\n6 -> 3\n6 -> 4\n}\n";
-
-	BOOST_CHECK_EQUAL(makeDigraph("myGraph", myGraph), expected);
-}
-
 BOOST_AUTO_TEST_CASE(matrix_weighted_graph) {
 	using Graph = matrix::Graph<NoProperty, WeightedProperty>;
 

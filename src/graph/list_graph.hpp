@@ -14,21 +14,6 @@
 #include <cstddef>
 
 namespace graph {
-	namespace list {
-		template <typename NodeProperty, typename EdgeProperty>
-		class Graph;
-	}
-}
-
-template <typename NodeProperty, typename EdgeProperty>
-std::ostream& operator<<(std::ostream& os,
-                         graph::list::Graph<NodeProperty, EdgeProperty> const& graph);
-
-template <typename NodeProperty, typename EdgeProperty>
-std::string makeDigraph(std::string name,
-                        graph::list::Graph<NodeProperty, EdgeProperty> const& graph);
-
-namespace graph {
 	/*! \brief Namespace used for the classes and types using a graph with an adjacency list as
 	 *         internal representation.
 	 */
@@ -48,11 +33,16 @@ namespace graph {
 
 			/*! \brief Create a graph with a certain number of vertices and some edges.
 			 *
-			 * \param nbVertices the number of vertices in the graph.
 			 * \param edges the edges to add in the graph.
 			 */
 			template <typename... Edges>
 			explicit Graph(Edges... edges);
+
+			/*! \brief Create a graph with some edges and their property.
+			 *
+			 * \param edges the edges to add in the graph.
+			 */
+			Graph(std::initializer_list<std::tuple<std::string, std::string, EdgeProperty>> edges);
 
 			/*! \brief Create a graph with some edges.
 			 *
@@ -101,7 +91,7 @@ namespace graph {
 			 * \param edge A tuple whose first element is the starting vertex, the second element
 			 *             is the end vertex, and the third element is the property of the vertex.
 			 */
-			void addEdges(std::tuple<std::string, std::string, EdgeProperty> const& edge);
+			void addEdges(std::tuple<std::string, std::string, EdgeProperty> edge);
 
 			/*! \brief Add several edges to the graph.
 			 *
@@ -110,7 +100,7 @@ namespace graph {
 			 * \sa addEdges(std::pair<std::string, std::string>)
 			 */
 			template <typename... Edges>
-			inline void addEdges(std::tuple<std::string, std::string, EdgeProperty> const& edge,
+			inline void addEdges(std::tuple<std::string, std::string, EdgeProperty> edge,
 			                     Edges... edges);
 
 			/*! \brief Add an edge to the graph.
@@ -118,7 +108,7 @@ namespace graph {
 			 * \param edge A pair whose first element is the starting vertex, and the second
 			 *        element is the end vertex.
 			 */
-			void addEdges(std::pair<std::string, std::string> const& edge);
+			void addEdges(std::pair<std::string, std::string> edge);
 
 			/*! \brief Add several edges to the graph.
 			 *
@@ -127,7 +117,7 @@ namespace graph {
 			 * \sa addEdges(std::pair<std::string, std::string>)
 			 */
 			template <typename... Edges>
-			inline void addEdges(std::pair<std::string, std::string> const& edge, Edges... edges);
+			inline void addEdges(std::pair<std::string, std::string> edge, Edges... edges);
 
 			/*! \brief Connect two nodes in the graph
 			 *
