@@ -1,5 +1,4 @@
-#ifndef GRAPH_LIB_PROPERTIES_HPP
-#define GRAPH_LIB_PROPERTIES_HPP
+#pragma once
 
 #include <string>
 
@@ -46,5 +45,3 @@ namespace graph {
 		    }
 	    };
 }
-
-#endif

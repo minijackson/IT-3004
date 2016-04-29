@@ -1,5 +1,4 @@
-#ifndef _GRAPH_LIB_LIST_NODE_HPP_
-#define _GRAPH_LIB_LIST_NODE_HPP_
+#pragma once
 
 #include <list>
 #include <string>
@@ -168,5 +167,3 @@ namespace graph {
 }
 
 #include "list_node.tcc"
-
-#endif

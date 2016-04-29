@@ -1,5 +1,4 @@
-#ifndef GRAPH_LIB_ALGORITHMS_HPP
-#define GRAPH_LIB_ALGORITHMS_HPP
+#pragma once
 
 #include <algorithm>
 #include <set>
@@ -205,5 +204,3 @@ namespace graph {
 		return undirected(mst);
 	}
 }
-
-#endif

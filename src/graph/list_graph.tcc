@@ -1,5 +1,4 @@
-#ifndef _GRAPH_LIB_LIST_GRAPH_TCC_
-#define _GRAPH_LIB_LIST_GRAPH_TCC_
+#pragma once
 
 #include "list_graph.hpp"
 
@@ -318,5 +317,3 @@ namespace graph {
 		}
 	}
 }
-
-#endif

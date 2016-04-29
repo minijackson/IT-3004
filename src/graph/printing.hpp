@@ -1,5 +1,4 @@
-#ifndef GRAPH_LIB_PRINTING_HPP
-#define GRAPH_LIB_PRINTING_HPP
+#pragma once
 
 #include "graph.hpp"
 
@@ -40,5 +39,3 @@ namespace graph {
 	}
 
 }
-
-#endif

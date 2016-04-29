@@ -1,5 +1,4 @@
-#ifndef _GRAPH_LIB_MATRIX_GRAPH_TCC_
-#define _GRAPH_LIB_MATRIX_GRAPH_TCC_
+#pragma once
 
 #include "matrix_graph.hpp"
 
@@ -313,5 +312,3 @@ namespace graph {
 		}
 	}
 }
-
-#endif

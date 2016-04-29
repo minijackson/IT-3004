@@ -1,5 +1,4 @@
-#ifndef _GRAPH_LIB_MATRIX_NODE_HPP_
-#define _GRAPH_LIB_MATRIX_NODE_HPP_
+#pragma once
 
 #include <vector>
 #include <string>
@@ -169,5 +168,3 @@ namespace graph {
 }
 
 #include "matrix_node.tcc"
-
-#endif

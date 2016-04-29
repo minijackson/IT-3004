@@ -1,5 +1,4 @@
-#ifndef GRAPH_LIB_MATRIX_NODE_TCC
-#define GRAPH_LIB_MATRIX_NODE_TCC
+#pragma once
 
 #include "matrix_node.hpp"
 
@@ -104,5 +103,3 @@ namespace graph {
 		      : ParentClass(other.id, other.connections, other.name, other.property) {}
 	}
 }
-
-#endif

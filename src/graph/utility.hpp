@@ -1,5 +1,4 @@
-#ifndef _GRAPH_LIB_UTILIY_HPP_
-#define _GRAPH_LIB_UTILIY_HPP_
+#pragma once
 
 #include <type_traits>
 
@@ -12,5 +11,3 @@ struct check_all<Trait, Head> : std::integral_constant<bool, Trait<Head>::value>
 
 template<template<typename> class Trait, typename... Args>
 constexpr bool const check_all_v = check_all<Trait, Args...>::value;
-
-#endif
