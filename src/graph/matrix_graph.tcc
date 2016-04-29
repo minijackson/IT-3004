@@ -19,16 +19,7 @@ namespace graph {
 
 		template <typename NodeProperty, typename EdgeProperty>
 		Graph<NodeProperty, EdgeProperty>::Graph(
-		        std::initializer_list<std::tuple<std::string, std::string, EdgeProperty>> edgeNames)
-		      : connections() {
-			for(const auto& edge : edgeNames) {
-				addEdges(std::move(edge));
-			}
-		}
-
-		template <typename NodeProperty, typename EdgeProperty>
-		Graph<NodeProperty, EdgeProperty>::Graph(
-		        std::initializer_list<std::pair<std::string, std::string>> edgeNames)
+		        std::initializer_list<Edge_t> edgeNames)
 		      : connections() {
 			for(const auto& edge : edgeNames) {
 				addEdges(std::move(edge));
@@ -103,36 +94,17 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::addEdges(
-		        std::tuple<std::string, std::string, EdgeProperty> edge) {
+		void Graph<NodeProperty, EdgeProperty>::addEdges(Edge_t edge) {
 			std::string start = std::get<0>(edge), end = std::get<1>(edge);
 			size_t beginId = getId(start), endId = getId(end);
-			connections[beginId][endId] = true;
+			connections[beginId][endId]  = true;
 			edgeProperties[{start, end}] = std::get<EdgeProperty>(edge);
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
 		template <typename... Edges>
-		inline void Graph<NodeProperty, EdgeProperty>::addEdges(
-		        std::tuple<std::string, std::string, EdgeProperty> edge,
-		        Edges... edges) {
+		inline void Graph<NodeProperty, EdgeProperty>::addEdges(Edge_t edge, Edges... edges) {
 			addEdges(edge);
-			addEdges(edges...);
-		}
-
-		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::addEdges(
-		        std::pair<std::string, std::string> edge) {
-			addEdges(
-			        std::make_tuple(std::move(edge.first), std::move(edge.second), EdgeProperty()));
-		}
-
-		template <typename NodeProperty, typename EdgeProperty>
-		template <typename... Edges>
-		inline void Graph<NodeProperty, EdgeProperty>::addEdges(
-		        std::pair<std::string, std::string> edge,
-		        Edges... edges) {
-			addEdges(std::make_tuple(edge.first, edge.second, EdgeProperty()));
 			addEdges(edges...);
 		}
 

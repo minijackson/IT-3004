@@ -19,10 +19,8 @@ namespace graph {
 
 		g.eachEdges([&symmetricGraph, &g](ConstNode begin, ConstNode end) {
 			std::string beginName = begin.getName(), endName = end.getName();
-			symmetricGraph.addEdges({end.getName(), begin.getName()});
-			symmetricGraph.setEdgeProperty(symmetricGraph[endName],
-			                               symmetricGraph[beginName],
-			                               g.getEdgeProperty(begin, end));
+			symmetricGraph.addEdges(
+			        {end.getName(), begin.getName(), g.getEdgeProperty(begin, end)});
 		});
 
 		return symmetricGraph;

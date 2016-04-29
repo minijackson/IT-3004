@@ -60,12 +60,12 @@ BOOST_AUTO_TEST_CASE(printing_make_digraph_matrix_graph) {
 BOOST_AUTO_TEST_CASE(printing_weighted_edge_list_graph) {
 	using Graph = list::Graph<NoProperty, WeightedProperty>;
 
-	Graph myGraph{std::make_tuple("4", "5", WeightedProperty{1}),
-	              std::make_tuple("6", "3", WeightedProperty{2}),
-	              std::make_tuple("2", "4", WeightedProperty{3}),
-	              std::make_tuple("5", "2", WeightedProperty{4}),
-	              std::make_tuple("6", "4", WeightedProperty{5}),
-	              std::make_tuple("3", "3", WeightedProperty{6})};
+	Graph myGraph{{"4", "5", WeightedProperty{1}},
+	              {"6", "3", WeightedProperty{2}},
+	              {"2", "4", WeightedProperty{3}},
+	              {"5", "2", WeightedProperty{4}},
+	              {"6", "4", WeightedProperty{5}},
+	              {"3", "3", WeightedProperty{6}}};
 
 	std::string expected = "digraph myGraph {\n"
 	                       "\"4\" -> \"5\" [label=\"1\"]\n"
@@ -82,12 +82,12 @@ BOOST_AUTO_TEST_CASE(printing_weighted_edge_list_graph) {
 BOOST_AUTO_TEST_CASE(printing_weighted_edge_matrix_graph) {
 	using Graph = matrix::Graph<NoProperty, WeightedProperty>;
 
-	Graph myGraph{std::make_tuple("4", "5", WeightedProperty{1}),
-	              std::make_tuple("6", "3", WeightedProperty{2}),
-	              std::make_tuple("2", "4", WeightedProperty{3}),
-	              std::make_tuple("5", "2", WeightedProperty{4}),
-	              std::make_tuple("6", "4", WeightedProperty{5}),
-	              std::make_tuple("3", "3", WeightedProperty{6})};
+	Graph myGraph{{"4", "5", WeightedProperty{1}},
+	              {"6", "3", WeightedProperty{2}},
+	              {"2", "4", WeightedProperty{3}},
+	              {"5", "2", WeightedProperty{4}},
+	              {"6", "4", WeightedProperty{5}},
+	              {"3", "3", WeightedProperty{6}}};
 
 	std::string expected = "digraph myGraph {\n"
 	                       "\"2\" -> \"4\" [label=\"3\"]\n"

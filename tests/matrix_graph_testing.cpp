@@ -21,9 +21,10 @@ BOOST_AUTO_TEST_CASE(empty_matrix_graph_creation) {
 
 BOOST_AUTO_TEST_CASE(matrix_graph_with_vertices_and_edges_creation) {
 	using Graph = matrix::Graph<NoProperty, NoProperty>;
+	using Edge  = Graph::Edge_t;
 
 	{
-		Graph myGraph(std::pair<std::string, std::string>{"0", "0"});
+		Graph myGraph(Edge{"0", "0"});
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 1);
 		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 1);
 		BOOST_CHECK_EQUAL(myGraph.getConnections().size(), 1);
@@ -34,10 +35,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_with_vertices_and_edges_creation) {
 	{
 		std::set<std::pair<std::string, std::string>> arcs{
 		        {"1", "3"}, {"1", "4"}, {"2", "7"}, {"8", "3"}};
-		Graph myGraph(std::pair<std::string, std::string>{"1", "3"},
-		              std::pair<std::string, std::string>{"1", "4"},
-		              std::pair<std::string, std::string>{"2", "7"},
-		              std::pair<std::string, std::string>{"8", "3"});
+		Graph myGraph(Edge{"1", "3"}, Edge{"1", "4"}, Edge{"2", "7"}, Edge{"8", "3"});
 
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 6);
 		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 4);
@@ -71,8 +69,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_with_initializer_list) {
 	}
 
 	{
-		std::initializer_list<std::pair<std::string, std::string>> arcs{
-		        {"1", "3"}, {"1", "4"}, {"2", "7"}, {"8", "3"}};
+		std::initializer_list<Graph::Edge_t> arcs{{"1", "3"}, {"1", "4"}, {"2", "7"}, {"8", "3"}};
 		Graph myGraph(arcs);
 		BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 6);
 		BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 4);
@@ -82,7 +79,8 @@ BOOST_AUTO_TEST_CASE(matrix_graph_with_initializer_list) {
 		BOOST_CHECK_EQUAL(myGraph.getConnections()[0][0], false);
 
 		for(const auto& arc : arcs) {
-			size_t beginId = myGraph.getId(arc.first), endId = myGraph.getId(arc.second);
+			size_t beginId = myGraph.getId(std::get<0>(arc)),
+			       endId = myGraph.getId(std::get<1>(arc));
 			BOOST_CHECK_EQUAL(myGraph.getConnections()[beginId][endId], true);
 		}
 	}
@@ -264,7 +262,7 @@ BOOST_AUTO_TEST_CASE(matrix_graph_add_edges) {
 	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 4);
 	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 8);
 	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["Hello"], myGraph["World"]).weight, 0);
-	myGraph.addEdges(std::make_tuple("World", "Hello", WeightedProperty{5}));
+	myGraph.addEdges({"World", "Hello", WeightedProperty{5}});
 	BOOST_CHECK_EQUAL(myGraph.getEdgesCount(), 5);
 	BOOST_CHECK_EQUAL(myGraph.getVerticesCount(), 8);
 	BOOST_CHECK_EQUAL(myGraph.getEdgeProperty(myGraph["World"], myGraph["Hello"]).weight, 5);
