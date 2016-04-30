@@ -1,13 +1,13 @@
 project('Graphe et Algorithmes', 'cpp', default_options: ['cpp_std=c++14'], license: 'MIT')
 
-subdir('./src/graph')
-
-subdir('./tests')
-
 celero_dep = dependency('celero', fallback: ['celero', 'celero_dep'])
 
-graph_dep_inc = include_directories('./src/')
+subdir('./src/graph')
 
+graph_dep_inc = include_directories('./src/')
 graph_dep = declare_dependency(include_directories: graph_dep_inc, link_with: libgraph)
+
+subdir('./tests')
+subdir('./benchmarks')
 
 # vim: ft=cmake
