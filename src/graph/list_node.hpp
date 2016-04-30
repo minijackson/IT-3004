@@ -88,7 +88,7 @@ namespace graph {
 			 *
 			 * \return The current node's property.
 			 */
-			NodeProperty getProperty() const;
+			NodeProperty const& getProperty() const;
 
 		protected:
 			/*! \brief The name of the node to reference.

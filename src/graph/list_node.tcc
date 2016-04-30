@@ -74,7 +74,7 @@ namespace graph {
 
 		template <typename NodePropertyVector, typename Connections>
 		auto GenericNode<NodePropertyVector, Connections>::getProperty()
-		        const -> NodeProperty {
+		        const -> NodeProperty const& {
 			return property[id];
 		}
 
