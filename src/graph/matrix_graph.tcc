@@ -58,7 +58,7 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::removeNode(ConstNode_t node) {
+		void Graph<NodeProperty, EdgeProperty>::removeNode(ConstNode_t const& node) {
 
 			std::string nodeName = node.getName();
 			size_t nodeId        = nodeNames.at(nodeName);
@@ -71,7 +71,7 @@ namespace graph {
 			}
 
 			connections.erase(connections.begin() + nodeId);
-			this->eachEdges([this, nodeId] (ConstNode_t begin, ConstNode_t end) {
+			this->eachEdges([this, nodeId] (ConstNode_t const& begin, ConstNode_t const& end) {
 				if(end.getId() == nodeId) {
 					removeEdge((*this)[begin.getName()], (*this)[end.getName()]);
 				}
@@ -84,7 +84,8 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		bool Graph<NodeProperty, EdgeProperty>::hasEdge(ConstNode_t begin, ConstNode_t end) const {
+		bool Graph<NodeProperty, EdgeProperty>::hasEdge(ConstNode_t const& begin,
+		                                                ConstNode_t const& end) const {
 			try {
 				edgeProperties.at({begin.getName(), end.getName()});
 				return true;
@@ -94,7 +95,7 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::addEdges(Edge_t edge) {
+		void Graph<NodeProperty, EdgeProperty>::addEdges(Edge_t const& edge) {
 			std::string start = std::get<0>(edge), end = std::get<1>(edge);
 			size_t beginId = getId(start), endId = getId(end);
 			connections[beginId][endId]  = true;
@@ -103,7 +104,8 @@ namespace graph {
 
 		template <typename NodeProperty, typename EdgeProperty>
 		template <typename... Edges>
-		inline void Graph<NodeProperty, EdgeProperty>::addEdges(Edge_t edge, Edges... edges) {
+		inline void Graph<NodeProperty, EdgeProperty>::addEdges(Edge_t const& edge,
+		                                                        Edges const&... edges) {
 			addEdges(edge);
 			addEdges(edges...);
 		}
@@ -117,8 +119,8 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::connect(ConstNode_t begin,
-		                                                ConstNode_t end,
+		void Graph<NodeProperty, EdgeProperty>::connect(ConstNode_t const& begin,
+		                                                ConstNode_t const& end,
 		                                                EdgeProperty property) {
 			size_t beginId = begin.getId(), endId = end.getId();
 			connections[beginId][endId] = true;
@@ -126,14 +128,14 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::connect(ConstNode_t begin,
-		                                                ConstNode_t end) {
+		void Graph<NodeProperty, EdgeProperty>::connect(ConstNode_t const& begin,
+		                                                ConstNode_t const& end) {
 			connect(begin, end, EdgeProperty());
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::removeEdge(ConstNode_t begin,
-		                                                   ConstNode_t end) {
+		void Graph<NodeProperty, EdgeProperty>::removeEdge(ConstNode_t const& begin,
+		                                                   ConstNode_t const& end) {
 			size_t beginId = begin.getId(), endId = end.getId();
 
 			if(!connections[beginId][endId]) {
@@ -150,16 +152,16 @@ namespace graph {
 
 		template <typename NodeProperty, typename EdgeProperty>
 		EdgeProperty Graph<NodeProperty, EdgeProperty>::getEdgeProperty(
-		        ConstNode_t begin,
-		        ConstNode_t end) const {
+		        ConstNode_t const& begin,
+		        ConstNode_t const& end) const {
 			// Use .at() instead of operator[] because the method .at() throw if the key does not
 			// exists, instead of inserting a new key, allowing "getEdgeProperty" to be const.
 			return edgeProperties.at({begin.getName(), end.getName()});
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::setEdgeProperty(ConstNode_t begin,
-		                                                        ConstNode_t end,
+		void Graph<NodeProperty, EdgeProperty>::setEdgeProperty(ConstNode_t const& begin,
+		                                                        ConstNode_t const& end,
 		                                                        EdgeProperty property) {
 			edgeProperties.at({begin.getName(), end.getName()}) = std::move(property);
 		}
@@ -190,7 +192,7 @@ namespace graph {
 			              "The function must be convertible to a function of type void(ConstNode)");
 
 			for(auto const& node : nodeNames) {
-				functor((*this)[node.first]);
+				functor(std::move((*this)[node.first]));
 			}
 		}
 
@@ -205,7 +207,7 @@ namespace graph {
 			for(auto const& begin: nodeNames) {
 				for(auto const& end: nodeNames) {
 					if(connections[begin.second][end.second]) {
-						functor((*this)[begin.first], (*this)[end.first]);
+						functor(std::move((*this)[begin.first]), std::move((*this)[end.first]));
 					}
 				}
 			}
@@ -213,7 +215,7 @@ namespace graph {
 
 		template <typename NodeProperty, typename EdgeProperty>
 		template <typename Functor>
-		void Graph<NodeProperty, EdgeProperty>::eachAdjacents(ConstNode_t vertex,
+		void Graph<NodeProperty, EdgeProperty>::eachAdjacents(ConstNode_t const& vertex,
 		                                                      Functor&& functor) const {
 			static_assert(std::is_convertible<Functor, std::function<void(ConstNode_t)>>::value,
 			              "The function must be convertible to a function of type void(ConstNode)");
@@ -221,7 +223,7 @@ namespace graph {
 
 			for(auto const& vertex : nodeNames) {
 				if(connections[vertexId][vertex.second]) {
-					functor((*this)[vertex.first]);
+					functor(std::move((*this)[vertex.first]));
 				}
 			}
 		}

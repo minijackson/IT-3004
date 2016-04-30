@@ -53,7 +53,7 @@ namespace graph {
 	template <typename Graph>
 	std::set<typename Graph::ConstNode_t> stronglyConnectedComponent(
 	        Graph const& g,
-	        typename Graph::ConstNode_t vertex) {
+	        typename Graph::ConstNode_t const& vertex) {
 		using Node = typename Graph::ConstNode_t;
 
 		std::set<Node> verticesToCheck{vertex}, existPathToVertex{vertex},
@@ -110,8 +110,9 @@ namespace graph {
 	 * \return The set of vertices which compose the connected component.
 	 */
 	template <typename Graph>
-	std::set<typename Graph::ConstNode_t> connectedComponent(Graph const& g,
-	                                                         typename Graph::ConstNode_t vertex) {
+	std::set<typename Graph::ConstNode_t> connectedComponent(
+	        Graph const& g,
+	        typename Graph::ConstNode_t const& vertex) {
 		using Node = typename Graph::ConstNode_t;
 
 		std::set<std::string> verticesToCheck{vertex.getName()}, component{vertex.getName()};
@@ -160,7 +161,7 @@ namespace graph {
 	 * \return The minimum spanning tree of the graph.
 	 */
 	template <typename Graph>
-	Graph minimumSpanningTree(Graph const& g, typename Graph::ConstNode_t vertex) {
+	Graph minimumSpanningTree(Graph const& g, typename Graph::ConstNode_t const& vertex) {
 		using ConstNode   = typename Graph::ConstNode_t;
 
 		auto compareEdges([&g](std::pair<ConstNode, ConstNode> left,

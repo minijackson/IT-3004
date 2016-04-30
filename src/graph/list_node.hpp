@@ -49,7 +49,7 @@ namespace graph {
 			 * \return true if the two nodes are the same node.
 			 */
 			template <typename OtherNodeProperty, typename OtherConnections>
-			bool operator==(GenericNode<OtherNodeProperty, OtherConnections> other) const;
+			bool operator==(GenericNode<OtherNodeProperty, OtherConnections> const& other) const;
 
 			/*! \brief Compare two nodes arbitrarily.
 			 *
@@ -57,7 +57,7 @@ namespace graph {
 			 * \return true or false.
 			 */
 			template <typename OtherNodeProperty, typename OtherConnections>
-			bool operator<(GenericNode<OtherNodeProperty, OtherConnections> other) const;
+			bool operator<(GenericNode<OtherNodeProperty, OtherConnections> const& other) const;
 
 			/*! \brief Return true if the current node is connected to the given node.
 			 *
@@ -161,7 +161,7 @@ namespace graph {
 			 *
 			 * \param other The Node to convert.
 			 */
-			ConstNode(Node<NodeProperty> other);
+			ConstNode(Node<NodeProperty> const& other);
 		};
 	}
 }

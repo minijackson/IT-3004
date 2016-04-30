@@ -71,20 +71,20 @@ namespace graph {
 			 *
 			 * \param node The node to remove.
 			 */
-			void removeNode(ConstNode_t node);
+			void removeNode(ConstNode_t const& node);
 
 			/*! \brief Check if an edge exists between two nodes.
 			 *
 			 * \param begin The start of the edge.
 			 * \param end The end of the edge.
 			 */
-			bool hasEdge(ConstNode_t begin, ConstNode_t end) const;
+			bool hasEdge(ConstNode_t const& begin, ConstNode_t const& end) const;
 
 			/*! \brief Add an edge to the graph.
 			 *
 			 * \param edge An edge.
 			 */
-			void addEdges(Edge_t edge);
+			void addEdges(Edge_t const& edge);
 
 			/*! \brief Add several edges to the graph.
 			 *
@@ -93,7 +93,7 @@ namespace graph {
 			 * \sa addEdges(Edge_t)
 			 */
 			template <typename... Edges>
-			inline void addEdges(Edge_t edge, Edges... edges);
+			inline void addEdges(Edge_t const& edge, Edges const&... edges);
 
 			/*! \brief Add several edges to the graph.
 			 *
@@ -108,14 +108,14 @@ namespace graph {
 			 * \param end The Node at the end of the edge.
 			 * \param property The property to assign to the edge.
 			 */
-			void connect(ConstNode_t begin, ConstNode_t end, EdgeProperty property);
+			void connect(ConstNode_t const& begin, ConstNode_t const& end, EdgeProperty property);
 
 			/*! \brief Connect two nodes in the graph
 			 *
 			 * \param begin The Node at the start of the edge
 			 * \param end The Node at the end of the edge
 			 */
-			void connect(ConstNode_t begin, ConstNode_t end);
+			void connect(ConstNode_t const& begin, ConstNode_t const& end);
 
 			/*! \brief Remove an edge from the graph.
 			 *
@@ -124,14 +124,14 @@ namespace graph {
 			 * \param begin The start of the edge.
 			 * \param end The end of the edge.
 			 */
-			void removeEdge(ConstNode_t begin, ConstNode_t end);
+			void removeEdge(ConstNode_t const& begin, ConstNode_t const& end);
 
 			/*! \brief Get the property of a given edge.
 			 *
 			 * \param begin The node at the start of the edge.
 			 * \param end The node at the end of the edge.
 			 */
-			EdgeProperty getEdgeProperty(ConstNode_t begin, ConstNode_t end) const;
+			EdgeProperty getEdgeProperty(ConstNode_t const& begin, ConstNode_t const& end) const;
 
 			/*! \brief Set the property of the given edge.
 			 *
@@ -139,8 +139,8 @@ namespace graph {
 			 * \param end The node at the end of the edge.
 			 * \param property The property to set.
 			 */
-			void setEdgeProperty(ConstNode_t begin,
-			                     ConstNode_t end,
+			void setEdgeProperty(ConstNode_t const& begin,
+			                     ConstNode_t const& end,
 			                     EdgeProperty property);
 
 			/*! \brief Get the matrix of connections for this graph.
@@ -184,7 +184,7 @@ namespace graph {
 			 * \param functor the function to call
 			 */
 			template <typename Functor>
-			void eachAdjacents(ConstNode_t vertex, Functor&& functor) const;
+			void eachAdjacents(ConstNode_t const& vertex, Functor&& functor) const;
 
 			/*! \brief Get the id of from the name of a node.
 			 *

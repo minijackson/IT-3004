@@ -33,20 +33,20 @@ namespace graph {
 		                                                    NodePropertyVector& property)
 		      : id(id)
 		      , connections(connections)
-		      , name(name)
+		      , name(std::move(name))
 		      , property(property) {}
 
 		template <typename NodePropertyVector, typename Connections>
 		template <typename OtherNodePropertyVector, typename OtherConnections>
 		bool GenericNode<NodePropertyVector, Connections>::operator==(
-		        GenericNode<OtherNodePropertyVector, OtherConnections> other) const {
+		        GenericNode<OtherNodePropertyVector, OtherConnections> const& other) const {
 			return name == other.name;
 		}
 
 		template <typename NodePropertyVector, typename Connections>
 		template <typename OtherNodePropertyVector, typename OtherConnections>
 		bool GenericNode<NodePropertyVector, Connections>::operator<(
-		        GenericNode<OtherNodePropertyVector, OtherConnections> other) const {
+		        GenericNode<OtherNodePropertyVector, OtherConnections> const& other) const {
 			return id < other.id;
 		}
 
@@ -83,7 +83,7 @@ namespace graph {
 		                         std::list<size_t>& connections,
 		                         std::string name,
 		                         std::vector<NodeProperty>& property)
-		      : ParentClass(id, connections, name, property) {}
+		      : ParentClass(id, connections, std::move(name), property) {}
 
 		template <typename NodeProperty>
 		NodeProperty& Node<NodeProperty>::getProperty() {
@@ -92,7 +92,7 @@ namespace graph {
 
 		template <typename NodeProperty>
 		void Node<NodeProperty>::setProperty(NodeProperty property) {
-			this->property[this->id] = property;
+			this->property[this->id] = std::move(property);
 		}
 
 		template <typename NodeProperty>
@@ -100,10 +100,10 @@ namespace graph {
 		                                   std::list<size_t> const& connections,
 		                                   std::string name,
 		                                   std::vector<NodeProperty> const& property)
-		      : ParentClass(id, connections, name, property) {}
+		      : ParentClass(id, connections, std::move(name), property) {}
 
 		template <typename NodePropertyVector>
-		ConstNode<NodePropertyVector>::ConstNode(Node<NodePropertyVector> other)
+		ConstNode<NodePropertyVector>::ConstNode(Node<NodePropertyVector> const& other)
 		      : ParentClass(other.id, other.connections, other.name, other.property) {}
 	}
 }
