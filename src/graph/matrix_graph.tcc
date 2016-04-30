@@ -28,20 +28,13 @@ namespace graph {
 
 		template <typename NodeProperty, typename EdgeProperty>
 		bool Graph<NodeProperty, EdgeProperty>::hasNode(std::string const& nodeName) const {
-			try {
-				nodeNames.at(nodeName);
-				return true;
-			} catch(std::out_of_range) {
-				return false;
-			}
+			return static_cast<bool>(nodeNames.count(nodeName));
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
 		void Graph<NodeProperty, EdgeProperty>::addNode(std::string const& nodeName,
 		                                                NodeProperty property) {
-			try {
-				nodeNames.at(nodeName);
-			} catch(std::out_of_range) {
+			if(!hasNode(nodeName)) {
 				size_t nodeId       = connections.size();
 				nodeNames[nodeName] = nodeId;
 				nodeProperties.push_back(property);
@@ -61,37 +54,34 @@ namespace graph {
 		void Graph<NodeProperty, EdgeProperty>::removeNode(ConstNode_t const& node) {
 
 			std::string nodeName = node.getName();
-			size_t nodeId        = nodeNames.at(nodeName);
 
-			nodeNames.erase(node.getName());
-			for(auto& node : nodeNames) {
-				if(node.second > nodeId) {
-					--node.second;
+			if(hasNode(nodeName)) {
+				size_t nodeId = nodeNames[nodeName];
+
+				nodeNames.erase(node.getName());
+				for(auto& node : nodeNames) {
+					if(node.second > nodeId) {
+						--node.second;
+					}
+				}
+
+				connections.erase(connections.begin() + nodeId);
+				this->eachEdges([this, nodeId](ConstNode_t const& begin, ConstNode_t const& end) {
+					if(end.getId() == nodeId) {
+						removeEdge((*this)[begin.getName()], (*this)[end.getName()]);
+					}
+				});
+
+				for(auto& nodeConnections : connections) {
+					nodeConnections.erase(nodeConnections.begin() + nodeId);
 				}
 			}
-
-			connections.erase(connections.begin() + nodeId);
-			this->eachEdges([this, nodeId] (ConstNode_t const& begin, ConstNode_t const& end) {
-				if(end.getId() == nodeId) {
-					removeEdge((*this)[begin.getName()], (*this)[end.getName()]);
-				}
-			});
-
-			for(auto& nodeConnections : connections) {
-				nodeConnections.erase(nodeConnections.begin() + nodeId);
-			}
-
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
 		bool Graph<NodeProperty, EdgeProperty>::hasEdge(ConstNode_t const& begin,
 		                                                ConstNode_t const& end) const {
-			try {
-				edgeProperties.at({begin.getName(), end.getName()});
-				return true;
-			} catch(std::out_of_range) {
-				return false;
-			}
+			return static_cast<bool>(edgeProperties.count({begin.getName(), end.getName()}));
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
@@ -230,12 +220,10 @@ namespace graph {
 
 		template <typename NodeProperty, typename EdgeProperty>
 		size_t Graph<NodeProperty, EdgeProperty>::getId(std::string const& name) {
-			try {
-				return nodeNames.at(name);
-			} catch(std::out_of_range) {
+			if(!hasNode(name)) {
 				addNode(name);
-				return nodeNames.at(name);
 			}
+			return nodeNames[name];
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
