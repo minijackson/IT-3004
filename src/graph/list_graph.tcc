@@ -26,7 +26,7 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		bool Graph<NodeProperty, EdgeProperty>::hasNode(std::string nodeName) const {
+		bool Graph<NodeProperty, EdgeProperty>::hasNode(std::string const& nodeName) const {
 			try {
 				nodeNames.at(nodeName);
 				return true;
@@ -36,7 +36,7 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::addNode(std::string nodeName,
+		void Graph<NodeProperty, EdgeProperty>::addNode(std::string const& nodeName,
 		                                                NodeProperty property) {
 			try {
 				nodeNames.at(nodeName);
@@ -50,7 +50,7 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		void Graph<NodeProperty, EdgeProperty>::addNode(std::string nodeName) {
+		void Graph<NodeProperty, EdgeProperty>::addNode(std::string const& nodeName) {
 			addNode(nodeName, NodeProperty());
 		}
 
@@ -101,7 +101,7 @@ namespace graph {
 
 		template <typename NodeProperty, typename EdgeProperty>
 		void Graph<NodeProperty, EdgeProperty>::addEdges(Edge_t const& edge) {
-			std::string start = std::get<0>(edge), end = std::get<1>(edge);
+			std::string start = std::move(std::get<0>(edge)), end = std::move(std::get<1>(edge));
 			size_t beginId = getId(start), endId = getId(end);
 			connections[beginId].push_back(endId);
 			edgeProperties[{start, end}] = std::get<EdgeProperty>(edge);
@@ -235,7 +235,7 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		size_t Graph<NodeProperty, EdgeProperty>::getId(std::string name) {
+		size_t Graph<NodeProperty, EdgeProperty>::getId(std::string const& name) {
 			try {
 				return nodeNames.at(name);
 			} catch(std::out_of_range) {
@@ -245,7 +245,7 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		size_t Graph<NodeProperty, EdgeProperty>::getId(std::string name) const {
+		size_t Graph<NodeProperty, EdgeProperty>::getId(std::string const& name) const {
 			return nodeNames.at(name);
 		}
 
@@ -260,13 +260,13 @@ namespace graph {
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		auto Graph<NodeProperty, EdgeProperty>::operator[](std::string nodeName) -> Node_t {
+		auto Graph<NodeProperty, EdgeProperty>::operator[](std::string const& nodeName) -> Node_t {
 			size_t nodeId = getId(nodeName);
 			return Node_t(nodeId, connections[nodeId], nodeName, nodeProperties);
 		}
 
 		template <typename NodeProperty, typename EdgeProperty>
-		auto Graph<NodeProperty, EdgeProperty>::operator[](std::string nodeName) const
+		auto Graph<NodeProperty, EdgeProperty>::operator[](std::string const& nodeName) const
 		        -> ConstNode_t {
 			size_t nodeId = getId(nodeName);
 			return ConstNode_t(nodeId, connections[nodeId], nodeName, nodeProperties);

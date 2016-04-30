@@ -48,19 +48,19 @@ namespace graph {
 			 *
 			 * \param nodeName The name of the node.
 			 */
-			bool hasNode(std::string nodeName) const;
+			bool hasNode(std::string const& nodeName) const;
 
 			/*! \brief Add a node to the graph.
 			 *
 			 * \param node The name of the node to add.
 			 */
-			void addNode(std::string nodeName, NodeProperty property);
+			void addNode(std::string const& nodeName, NodeProperty property);
 
 			/*! \brief Add a node to the graph.
 			 *
 			 * \param node The name of the node to add.
 			 */
-			void addNode(std::string nodeName);
+			void addNode(std::string const& nodeName);
 
 			/*! \brief Remove a node from the graph.
 			 *
@@ -193,7 +193,7 @@ namespace graph {
 			 * \param name The name of the node.
 			 * \return The id of the node.
 			 */
-			size_t getId(std::string name);
+			size_t getId(std::string const& name);
 
 			/*! \brief Get the id of from the name of a node.
 			 *
@@ -201,7 +201,7 @@ namespace graph {
 			 * \return The id of the node.
 			 * \exception std::out_of_range If the node is not in the graph.
 			 */
-			size_t getId(std::string name) const;
+			size_t getId(std::string const& name) const;
 
 			/*! \brief Get the first node of the graph.
 			 *
@@ -220,14 +220,14 @@ namespace graph {
 			 * \param nodeId The name of the node.
 			 * \return The Node representing the given node.
 			 */
-			Node_t operator[](std::string nodeName);
+			Node_t operator[](std::string const& nodeName);
 
 			/*! \brief Return a Node representing a node from this graph with a given name.
 			 *
 			 * \param nodeId The name of the node.
 			 * \return The Node representing the given node.
 			 */
-			ConstNode_t operator[](std::string nodeName) const;
+			ConstNode_t operator[](std::string const& nodeName) const;
 
 			/*! \brief Check if two graphs are equal.
 			 *
