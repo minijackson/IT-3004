@@ -16,13 +16,11 @@ namespace graph {
 			int gScore;
 			int hScore;
 
-			std::string parent;
-
 			State state;
 
 		    bool operator==(AstarNodeProperty const& other) const {
 			    return (gScore == other.gScore) && (hScore == other.hScore) &&
-			           (parent == other.parent) && (state == other.state);
+			           (state == other.state);
 		    }
 		};
 
@@ -31,11 +29,8 @@ namespace graph {
 			int gScore;
 			int hScore;
 
-			std::string parent;
-
 		    bool operator==(AstarNodeProperty const& other) const {
-			    return (gScore == other.gScore) && (hScore == other.hScore) &&
-			           (parent == other.parent);
+			    return (gScore == other.gScore) && (hScore == other.hScore);
 		    }
 		};
 
