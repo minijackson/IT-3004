@@ -6,7 +6,7 @@ namespace graph {
 		struct WeightedProperty {
 			int weight;
 
-		    bool operator==(WeightedProperty other) const {
+		    bool operator==(WeightedProperty const& other) const {
 			    return weight == other.weight;
 		    }
 		};
@@ -20,7 +20,7 @@ namespace graph {
 
 			State state;
 
-		    bool operator==(AstarNodeProperty other) const {
+		    bool operator==(AstarNodeProperty const& other) const {
 			    return (gScore == other.gScore) && (hScore == other.hScore) &&
 			           (parent == other.parent) && (state == other.state);
 		    }
@@ -33,14 +33,14 @@ namespace graph {
 
 			std::string parent;
 
-		    bool operator==(AstarNodeProperty other) const {
+		    bool operator==(AstarNodeProperty const& other) const {
 			    return (gScore == other.gScore) && (hScore == other.hScore) &&
 			           (parent == other.parent);
 		    }
 		};
 
 	    struct NoProperty {
-		    bool operator==(NoProperty) const {
+		    bool operator==(NoProperty const&) const {
 			    return true;
 		    }
 	    };
