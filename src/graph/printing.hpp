@@ -7,6 +7,11 @@
 
 namespace graph {
 
+	/*! \brief Output a graph in the form of graphviz.
+	 *
+	 * \param os the stream to output to.
+	 * \param graph the graph to output.
+	 */
 	template <template <class, class> class Graph, typename NodeProperty>
 	std::ostream& operator<<(std::ostream& os, Graph<NodeProperty, NoProperty> const& graph) {
 		using ConstNode = typename Graph<NodeProperty, NoProperty>::ConstNode_t;
@@ -18,6 +23,11 @@ namespace graph {
 		return os;
 	}
 
+	/*! \brief Output a graph with weighted arcs in the form of graphviz.
+	 *
+	 * \param os the stream to output to.
+	 * \param graph the graph to output.
+	 */
 	template <template <class, class> class Graph, typename NodeProperty>
 	std::ostream& operator<<(std::ostream& os, Graph<NodeProperty, WeightedProperty> const& graph) {
 		using ConstNode = typename Graph<NodeProperty, NoProperty>::ConstNode_t;
@@ -30,6 +40,11 @@ namespace graph {
 		return os;
 	}
 
+	/*! \brief Print a graph directly usable by graphviz.
+	 *
+	 * \param name the name of the graph.
+	 * \param graph the graph to output.
+	 */
 	template <class Graph>
 	std::string makeDigraph(std::string name,
 	                        Graph const& graph) {

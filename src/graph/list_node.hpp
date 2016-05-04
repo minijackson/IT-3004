@@ -24,9 +24,17 @@ namespace graph {
 
 			GenericNode() = delete;
 
+			/*! \brief Construct a node from another node.
+			 *
+			 * \param other the other node.
+			 */
 			template <typename OtherNodePropertyVector, typename OtherConnections>
 			GenericNode(GenericNode<OtherNodePropertyVector, OtherConnections>& other);
 
+			/*! \brief Construct a graph from another graph.
+			 *
+			 * \param other the other graph.
+			 */
 			template <typename OtherNodePropertyVector, typename OtherConnections>
 			GenericNode(GenericNode<OtherNodePropertyVector, OtherConnections>&& other);
 
@@ -34,6 +42,8 @@ namespace graph {
 			 *
 			 * \param id The name of the node to reference.
 			 * \param connections A reference to the boolean matrix of the parent Graph.
+			 * \param name the name of the node.
+			 * \param property a reference to the properties vector of the parent Graph.
 			 */
 			template <typename ParentConnections>
 			GenericNode(size_t id,
@@ -61,7 +71,7 @@ namespace graph {
 
 			/*! \brief Return true if the current node is connected to the given node.
 			 *
-			 * \param otherId the other node to check.
+			 * \param other the other node to check.
 			 * \return true if the current node is connected to the given node.
 			 */
 			bool isConnectedTo(GenericNode<NodePropertyVector, Connections> const& other) const;
@@ -111,6 +121,12 @@ namespace graph {
 		template <typename NodeProperty>
 		class ConstNode;
 
+		/*! \brief Represents a Node
+		 *
+		 * An object of type Node will store a reference to the boolean matrix of the parent Graph.
+		 * Therefore, like an iterator, using this object after the destruction of the parent Graph
+		 * will result in a dandling reference.
+		 */
 		template <typename NodeProperty>
 		class Node : public GenericNode<std::vector<NodeProperty>&, std::list<size_t>&> {
 			using ParentClass = GenericNode<std::vector<NodeProperty>&, std::list<size_t>&>;
@@ -140,6 +156,12 @@ namespace graph {
 			friend ConstNode<NodeProperty>;
 		};
 
+		/*! \brief Represents a immutable Node
+		 *
+		 * An object of type Node will store a constant reference to the boolean matrix of the
+		 * parent Graph. Therefore, like an iterator, using this object after the destruction of the
+		 * parent Graph will result in a dandling reference.
+		 */
 		template <typename NodeProperty>
 		class ConstNode
 		        : public GenericNode<std::vector<NodeProperty> const&, std::list<size_t> const&> {
@@ -151,6 +173,8 @@ namespace graph {
 			 *
 			 * \param id The name of the node to reference.
 			 * \param connections A reference to the boolean matrix of the parent Graph.
+			 * \param name the name of the node.
+			 * \param property a reference to the properties vector of the parent Graph.
 			 */
 			ConstNode(size_t id,
 			          std::list<size_t> const& connections,

@@ -23,8 +23,16 @@ namespace graph {
 		template <typename NodeProperty, typename EdgeProperty>
 		class Graph {
 		public:
+			/*! \brief The edge type used by this graph.
+			 */
 			using Edge_t      = Edge<EdgeProperty>;
+
+			/*! \brief The node type used by this graph.
+			 */
 			using Node_t      = Node<NodeProperty>;
+
+			/*! \brief The immutable node type used by this graph.
+			 */
 			using ConstNode_t = ConstNode<NodeProperty>;
 
 			/*! \brief Create an empty graph
@@ -52,13 +60,14 @@ namespace graph {
 
 			/*! \brief Add a node to the graph.
 			 *
-			 * \param node The name of the node to add.
+			 * \param nodeName The name of the node to add.
+			 * \param property The property of the node to add.
 			 */
 			void addNode(std::string const& nodeName, NodeProperty property);
 
 			/*! \brief Add a node to the graph.
 			 *
-			 * \param node The name of the node to add.
+			 * \param nodeName The name of the node to add.
 			 */
 			void addNode(std::string const& nodeName);
 
@@ -97,7 +106,7 @@ namespace graph {
 
 			/*! \brief Add several edges to the graph.
 			 *
-			 * \param edge Many edges.
+			 * \param edges Many edges.
 			 * \sa addEdges(Edge_t)
 			 */
 			inline void addEdges(std::initializer_list<Edge_t> edges);
@@ -181,6 +190,7 @@ namespace graph {
 			 *
 			 * The functor must be convertible to a function of type void(Node)
 			 *
+			 * \param vertex the vertex from which to process the adjacents.
 			 * \param functor the function to call
 			 */
 			template <typename Functor>
@@ -217,14 +227,14 @@ namespace graph {
 
 			/*! \brief Return a Node representing a node from this graph with a given name.
 			 *
-			 * \param nodeId The name of the node.
+			 * \param nodeName The name of the node.
 			 * \return The Node representing the given node.
 			 */
 			Node_t operator[](std::string const& nodeName);
 
 			/*! \brief Return a Node representing a node from this graph with a given name.
 			 *
-			 * \param nodeId The name of the node.
+			 * \param nodeName The name of the node.
 			 * \return The Node representing the given node.
 			 */
 			ConstNode_t operator[](std::string const& nodeName) const;
@@ -263,8 +273,13 @@ namespace graph {
 			std::map<std::string, size_t> nodeNames;
 		};
 
+		/*! \brief A graph to be used by an A* algorithm.
+		 */
 		template <typename State>
 		using AstarGraph    = Graph<AstarNodeProperty<State>, WeightedProperty>;
+
+		/*! \brief A graph with weighted edges
+		 */
 		using WeightedGraph = Graph<NoProperty, WeightedProperty>;
 	}
 }
