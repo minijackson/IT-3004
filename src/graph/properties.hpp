@@ -27,11 +27,11 @@ namespace graph {
 		template <typename State>
 		struct AstarNodeProperty {
 
-			/*! \brief the $g(n)$ of the node.
+			/*! \brief the \f$g(n)\f$ of the node.
 			 */
 			int gScore;
 
-			/*! \brief the $h(n)$ of the node.
+			/*! \brief the \f$h(n)\f$ of the node.
 			 */
 			int hScore;
 
@@ -54,11 +54,11 @@ namespace graph {
 		template <>
 		struct AstarNodeProperty<void> {
 
-			/*! \brief the $g(n)$ of the node.
+			/*! \brief the \f$g(n)\f$ of the node.
 			 */
 			int gScore;
 
-			/*! \brief the $h(n)$ of the node.
+			/*! \brief the \f$h(n)\f$ of the node.
 			 */
 			int hScore;
 
